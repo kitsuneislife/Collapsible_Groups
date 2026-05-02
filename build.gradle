@@ -96,6 +96,10 @@ repositories {
         url = 'https://maven.blamejared.com'
     }
     maven {
+        name = 'Architectury'
+        url = 'https://maven.architectury.dev'
+    }
+    maven {
         name = 'KubeJS'
         url = 'https://maven.latvian.dev/releases'
     }

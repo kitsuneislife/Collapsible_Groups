@@ -8,7 +8,7 @@ This mod provides JEI ingredient grouping for Minecraft 1.21.1, with the richest
 
 ## Forge 1.20.1 Backport Progress
 
-Progress (0% -> 100%): [####------] 35%
+Progress (0% -> 100%): [#####-----] 43%
 
 Backport Changelog (minimal):
 - Iter 01 (5%): Repo trimmed to Forge-only layout; sources/resources merged into root module.
@@ -16,3 +16,5 @@ Backport Changelog (minimal):
 - Iter 03 (25%): KubeJS + soft-dep hooks restored; 1.20.1 tag-based stack handling.
 - Iter 04 (32%): Replaced 1.21.1-only APIs (ResourceLocation, ItemStack compare) for 1.20.1.
 - Iter 05 (35%): Build script guard for missing sourcesJar; compile requires Java 17 toolchain.
+- Iter 06 (40%): Targeted JEI/KubeJS versions for Forge 1.20.1.
+- Iter 07 (43%): Added Architectury maven repo for KubeJS deps.
