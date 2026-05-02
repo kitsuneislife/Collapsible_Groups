@@ -31,9 +31,9 @@ public final class CompiledFilter {
 			case GroupFilter.Any any -> new AnyNode(any.children().stream().map(CompiledFilter::compileNode).toList());
 			case GroupFilter.All all -> new AllNode(all.children().stream().map(CompiledFilter::compileNode).toList());
 			case GroupFilter.Not not -> new NotNode(compileNode(not.child()));
-			case GroupFilter.Id id -> new IdNode(canonicalType(id.ingredientType()), ResourceLocation.parse(id.id()));
-			case GroupFilter.Tag tag -> new TagNode(canonicalType(tag.ingredientType()), ResourceLocation.parse(tag.tag()));
-			case GroupFilter.BlockTag blockTag -> new BlockTagNode(ResourceLocation.parse(blockTag.tag()));
+			case GroupFilter.Id id -> new IdNode(canonicalType(id.ingredientType()), new ResourceLocation(id.id()));
+			case GroupFilter.Tag tag -> new TagNode(canonicalType(tag.ingredientType()), new ResourceLocation(tag.tag()));
+			case GroupFilter.BlockTag blockTag -> new BlockTagNode(new ResourceLocation(blockTag.tag()));
 			case GroupFilter.ItemPathStartsWith startsWith -> new ItemPathStartsWithNode(startsWith.prefix());
 			case GroupFilter.ItemPathEndsWith endsWith -> new ItemPathEndsWithNode(endsWith.suffix());
 			case GroupFilter.Namespace namespace -> new NamespaceNode(canonicalType(namespace.ingredientType()), namespace.namespace());

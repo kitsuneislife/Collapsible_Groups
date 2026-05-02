@@ -38,7 +38,7 @@ public final class GroupIconHelper implements IIngredientHelper<GroupIcon> {
 
 	@Override
 	public ResourceLocation getResourceLocation(GroupIcon ingredient) {
-		return ResourceLocation.fromNamespaceAndPath("collapsible_groups", sanitizePath(ingredient.groupId()));
+		return new ResourceLocation("collapsible_groups", sanitizePath(ingredient.groupId()));
 	}
 
 	@Override

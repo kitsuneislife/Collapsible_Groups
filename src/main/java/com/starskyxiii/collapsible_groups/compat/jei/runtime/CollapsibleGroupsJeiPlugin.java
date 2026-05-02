@@ -26,7 +26,7 @@ public class CollapsibleGroupsJeiPlugin implements IModPlugin {
 
 	@Override
 	public ResourceLocation getPluginUid() {
-		return ResourceLocation.fromNamespaceAndPath("collapsible_groups", "jei_plugin");
+		return new ResourceLocation("collapsible_groups", "jei_plugin");
 	}
 
 	@Override

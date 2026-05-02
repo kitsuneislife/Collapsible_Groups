@@ -101,7 +101,10 @@ public class JEIGenericGroupEntriesKubeEvent<T> implements dev.latvian.mods.kube
 			};
 		}
 		if (str.startsWith("#")) {
-			ResourceLocation tagId = ResourceLocation.parse(str.substring(1));
+			ResourceLocation tagId = ResourceLocation.tryParse(str.substring(1));
+			if (tagId == null) {
+				return ingredient -> false;
+			}
 			return ingredient -> helper.getTagStream(ingredient).anyMatch(tagId::equals);
 		}
 		ResourceLocation exactId = ResourceLocation.tryParse(str);

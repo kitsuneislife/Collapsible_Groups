@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 public class GroupsButtonController implements IIconButtonController {
 
 	private static final ResourceLocation TEXTURE =
-		ResourceLocation.fromNamespaceAndPath("collapsible_groups", "textures/gui/groups_button.png");
+		new ResourceLocation("collapsible_groups", "textures/gui/groups_button.png");
 
 	@Override
 	public void initState(IButtonState state) {
