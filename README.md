@@ -5,3 +5,10 @@ Collapsible Groups is a JEI grouping mod for Minecraft 1.21.1. It lets players, 
 ## Overview
 
 This mod provides JEI ingredient grouping for Minecraft 1.21.1, with the richest feature set on NeoForge and lighter-weight builds for Forge and Fabric.
+
+## Forge 1.20.1 Backport Progress
+
+Progress (0% -> 100%): [#---------] 5%
+
+Backport Changelog (minimal):
+- Iter 01 (5%): Repo trimmed to Forge-only layout; sources/resources merged into root module.
