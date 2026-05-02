@@ -20,6 +20,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fml.ModList;
+import mezz.jei.api.runtime.IIngredientManager;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -48,6 +50,7 @@ import java.util.stream.Stream;
 public abstract class MixinIngredientFilter {
 	@Shadow @Nullable private List<IElement<?>> ingredientListCached;
 	@Shadow @Final  private IFilterTextSource filterTextSource;
+	@Shadow @Final  private IIngredientManager ingredientManager;
 
 	@org.spongepowered.asm.mixin.gen.Invoker("getIngredientListUncached")
 	protected abstract Stream<ITypedIngredient<?>> cg$getIngredientListUncached(String filterText);
@@ -149,6 +152,17 @@ public abstract class MixinIngredientFilter {
 		} else if (all == null) {
 			all = this.cg$getIngredientListUncached("").toList();
 			this.cg$cachedFullList = all;
+		}
+
+		if (!GroupRegistry.isKubeJsApplied() && ModList.get().isLoaded("kubejs")) {
+			com.starskyxiii.collapsible_groups.compat.kubejs.KubeJSGroupBridge.applyGroups(
+				GroupRegistry.getJeiAllItems(),
+				List.of(),
+				this.ingredientManager
+			);
+			GroupRegistry.markKubeJsApplied();
+			this.cg$ingredientGroupIndex = null;
+			this.cg$pendingIndex = null;
 		}
 
 		if (this.cg$pendingIndex != null && this.cg$pendingIndex.isDone()) {

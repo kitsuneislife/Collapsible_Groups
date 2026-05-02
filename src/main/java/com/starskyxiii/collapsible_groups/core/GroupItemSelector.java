@@ -59,7 +59,7 @@ public final class GroupItemSelector {
 
 	public static Optional<String> tryExactSelector(ItemStack stack) {
 		ItemStack normalized = normalizedCopy(stack);
-		return ItemStack.STRICT_SINGLE_ITEM_CODEC
+		return ItemStack.CODEC
 			.encodeStart(serializationContext(), normalized)
 			.resultOrPartial(error -> Constants.LOG.warn("Failed to encode exact group selector for {}: {}", normalized, error))
 			.map(encoded -> STACK_PREFIX + encoded);
@@ -72,7 +72,7 @@ public final class GroupItemSelector {
 
 		try {
 			JsonElement encoded = JsonParser.parseString(selector.substring(STACK_PREFIX.length()));
-			return ItemStack.STRICT_SINGLE_ITEM_CODEC.parse(serializationContext(), encoded)
+			return ItemStack.CODEC.parse(serializationContext(), encoded)
 				.resultOrPartial(error -> Constants.LOG.warn("Failed to decode exact group selector '{}': {}", selector, error))
 				.map(GroupItemSelector::normalizedCopy);
 		} catch (RuntimeException e) {

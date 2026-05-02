@@ -11,6 +11,7 @@ import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -33,6 +34,19 @@ public class CollapsibleGroupsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::registerTooltipFactories);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterReloadListeners);
         MinecraftForge.EVENT_BUS.addListener(this::onRegisterClientCommands);
+
+        if (ModList.get().isLoaded("kubejs")) {
+            MinecraftForge.EVENT_BUS.register(
+                com.starskyxiii.collapsible_groups.compat.kubejs.KubeJSRemoteListener.class
+            );
+        }
+
+        if (ModList.get().isLoaded("mekanism")) {
+            com.starskyxiii.collapsible_groups.compat.softdep.MekanismIngredientTypeLoader.register();
+        }
+        if (ModList.get().isLoaded("productivebees")) {
+            com.starskyxiii.collapsible_groups.compat.softdep.ProductiveBeesIngredientTypeLoader.register();
+        }
     }
 
     private void onRegisterReloadListeners(RegisterClientReloadListenersEvent event) {

@@ -27,3 +27,9 @@ mandatory = false
 versionRange = "[${jei_version},)"
 ordering = "NONE"
 side = "CLIENT"
+[[dependencies.${mod_id}]]
+modId = "kubejs"
+mandatory = false
+versionRange = "[${kubejs_version},)"
+ordering = "NONE"
+side = "CLIENT"

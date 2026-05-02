@@ -156,7 +156,7 @@ public final class ItemFilterQueryCompiler {
 					if (bucket.isEmpty()) return List.of();
 					List<IngredientFilterItemIndex.ItemEntry> matches = new ArrayList<>();
 					for (IngredientFilterItemIndex.ItemEntry entry : bucket) {
-						if (ItemStack.isSameItemSameComponents(normalized, entry.stack())) {
+						if (ItemStack.isSameItemSameTags(normalized, entry.stack())) {
 							matches.add(entry);
 						}
 					}
