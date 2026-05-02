@@ -256,6 +256,6 @@ tasks.named('processResources') {
     dependsOn(tasks.named('generateGroupLang'))
 }
 
-tasks.named('sourcesJar') {
+tasks.matching { it.name == 'sourcesJar' }.configureEach {
     dependsOn(tasks.named('generateGroupLang'))
 }
