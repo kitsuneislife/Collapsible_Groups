@@ -1,6 +1,6 @@
 {
     "pack": {
-        "description": "${mod_name}",
-        "pack_format": 34
+        "description": "Collapsible Groups",
+        "pack_format": 15
     }
 }

@@ -38,6 +38,21 @@ public final class ForgeConfig implements IConfigProvider {
 			&& LOAD_MACAWS_SERIES.get()
 			&& isAnyMacawsSeriesLoaded();
 	}
+	@Override public boolean shouldLoadAE2() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_AE2.get() && net.minecraftforge.fml.ModList.get().isLoaded("ae2");
+	}
+	@Override public boolean shouldLoadChisel() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_CHISEL.get() && net.minecraftforge.fml.ModList.get().isLoaded("chisel");
+	}
+	@Override public boolean shouldLoadApotheosis() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_APOTHEOSIS.get() && net.minecraftforge.fml.ModList.get().isLoaded("apotheosis");
+	}
+	@Override public boolean shouldLoadEnderIO() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_ENDERIO.get() && net.minecraftforge.fml.ModList.get().isLoaded("enderio");
+	}
+	@Override public boolean shouldLoadIronsSpellbooks() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_IRONS_SPELLBOOKS.get() && net.minecraftforge.fml.ModList.get().isLoaded("irons_spellbooks");
+	}
 	@Override public boolean showManagerButton()                   { return SHOW_MANAGER_BUTTON.get(); }
 	@Override public boolean debugTimingEnabled()                  { return DEBUG_TIMING_LOGS.get(); }
 	@Override public boolean debugStartupIndexVerificationEnabled() { return DEBUG_STARTUP_INDEX_VERIFY.get(); }
@@ -70,6 +85,12 @@ public final class ForgeConfig implements IConfigProvider {
 	 * Ignored if none of the supported Macaw's mods are installed.
 	 */
 	public static final ForgeConfigSpec.BooleanValue LOAD_MACAWS_SERIES;
+
+	public static final ForgeConfigSpec.BooleanValue LOAD_AE2;
+	public static final ForgeConfigSpec.BooleanValue LOAD_CHISEL;
+	public static final ForgeConfigSpec.BooleanValue LOAD_APOTHEOSIS;
+	public static final ForgeConfigSpec.BooleanValue LOAD_ENDERIO;
+	public static final ForgeConfigSpec.BooleanValue LOAD_IRONS_SPELLBOOKS;
 
 	// ui
 
@@ -127,6 +148,11 @@ public final class ForgeConfig implements IConfigProvider {
 				"Has no effect if none of the supported Macaw's mods are installed."
 			)
 			.define("loadMacawsSeries", true);
+		LOAD_AE2 = builder.comment("Whether to load built-in AE2 groups.").define("loadAe2", true);
+		LOAD_CHISEL = builder.comment("Whether to load built-in Chisel groups.").define("loadChisel", true);
+		LOAD_APOTHEOSIS = builder.comment("Whether to load built-in Apotheosis groups.").define("loadApotheosis", true);
+		LOAD_ENDERIO = builder.comment("Whether to load built-in EnderIO groups.").define("loadEnderIO", true);
+		LOAD_IRONS_SPELLBOOKS = builder.comment("Whether to load built-in Iron's Spellbooks groups.").define("loadIronsSpellbooks", true);
 		// Note: Chipped and RS2 integration groups are not yet implemented on Forge.
 		// IConfigProvider defaults shouldLoadChipped() and shouldLoadRS2() to false.
 		builder.pop(); // ModIntegration

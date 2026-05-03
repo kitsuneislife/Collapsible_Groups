@@ -12,16 +12,16 @@ class ItemPathCompiledFilterTest {
 	void itemPathStartsWithMatchesOnlyItemPathsWithRequestedPrefix() {
 		CompiledFilter filter = CompiledFilter.compile(Filters.itemPathStartsWith("gutter_"));
 
-		assertTrue(filter.matches(new FakeIngredientView("item", ResourceLocation.parse("mcwroofs:gutter_middle_yellow"))));
-		assertFalse(filter.matches(new FakeIngredientView("item", ResourceLocation.parse("mcwroofs:yellow_striped_awning"))));
+		assertTrue(filter.matches(new FakeIngredientView("item", new ResourceLocation("mcwroofs:gutter_middle_yellow"))));
+		assertFalse(filter.matches(new FakeIngredientView("item", new ResourceLocation("mcwroofs:yellow_striped_awning"))));
 	}
 
 	@Test
 	void itemPathEndsWithMatchesOnlyItemPathsWithRequestedSuffix() {
 		CompiledFilter filter = CompiledFilter.compile(Filters.itemPathEndsWith("_chair"));
 
-		assertTrue(filter.matches(new FakeIngredientView("item", ResourceLocation.parse("mcwfurnitures:jungle_chair"))));
-		assertFalse(filter.matches(new FakeIngredientView("item", ResourceLocation.parse("mcwfurnitures:jungle_table"))));
+		assertTrue(filter.matches(new FakeIngredientView("item", new ResourceLocation("mcwfurnitures:jungle_chair"))));
+		assertFalse(filter.matches(new FakeIngredientView("item", new ResourceLocation("mcwfurnitures:jungle_table"))));
 	}
 
 	@Test
@@ -29,8 +29,8 @@ class ItemPathCompiledFilterTest {
 		CompiledFilter startsWith = CompiledFilter.compile(Filters.itemPathStartsWith("gutter_"));
 		CompiledFilter endsWith = CompiledFilter.compile(Filters.itemPathEndsWith("_chair"));
 
-		assertFalse(startsWith.matches(new FakeIngredientView("fluid", ResourceLocation.parse("minecraft:water"))));
-		assertFalse(endsWith.matches(new FakeIngredientView("mekanism:chemical", ResourceLocation.parse("mekanism:hydrogen"))));
+		assertFalse(startsWith.matches(new FakeIngredientView("fluid", new ResourceLocation("minecraft:water"))));
+		assertFalse(endsWith.matches(new FakeIngredientView("mekanism:chemical", new ResourceLocation("mekanism:hydrogen"))));
 	}
 
 	@Test

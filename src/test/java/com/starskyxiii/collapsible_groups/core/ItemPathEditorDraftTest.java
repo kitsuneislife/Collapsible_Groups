@@ -76,11 +76,11 @@ class ItemPathEditorDraftTest {
 			GroupFilterClauseFormatter.format(new GroupFilter.ItemPathEndsWith("_chair"));
 
 		assertEquals(1, startsWithClauses.size());
-		assertEquals("Item Path Starts With", startsWithClauses.getFirst().label());
-		assertEquals("gutter_", startsWithClauses.getFirst().value());
+		assertEquals("Item Path Starts With", startsWithClauses.get(0).label());
+		assertEquals("gutter_", startsWithClauses.get(0).value());
 
 		assertEquals(1, endsWithClauses.size());
-		assertEquals("Item Path Ends With", endsWithClauses.getFirst().label());
-		assertEquals("_chair", endsWithClauses.getFirst().value());
+		assertEquals("Item Path Ends With", endsWithClauses.get(0).label());
+		assertEquals("_chair", endsWithClauses.get(0).value());
 	}
 }

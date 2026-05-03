@@ -1,14 +1,14 @@
 # Collapsible Groups
 
-Collapsible Groups is a JEI grouping mod for Minecraft 1.21.1. It lets players, modpack developers, and modders define collapsible item, fluid, and other ingredient type groups through an in-game editor, JSON config files, KubeJS, or built-in providers.
+Collapsible Groups is a JEI grouping mod for Minecraft 1.20.1 & 1.21.1. It lets players, modpack developers, and modders define collapsible item, fluid, and other ingredient type groups through an in-game editor, JSON config files, KubeJS, or built-in providers.
 
 ## Overview
 
-This mod provides JEI ingredient grouping for Minecraft 1.21.1, with the richest feature set on NeoForge and lighter-weight builds for Forge and Fabric.
+This mod provides JEI ingredient grouping for Minecraft 1.20.1 and 1.21.1, with the richest feature set on NeoForge/Forge and lighter-weight builds for Fabric.
 
 ## Forge 1.20.1 Backport Progress
 
-Progress (0% -> 100%): [######----] 58%
+Progress (0% -> 100%): [##########] 100%
 
 Backport Changelog (minimal):
 - Iter 01 (5%): Repo trimmed to Forge-only layout; sources/resources merged into root module.
@@ -20,3 +20,4 @@ Backport Changelog (minimal):
 - Iter 07 (43%): Added Architectury maven repo for KubeJS deps.
 - Iter 08 (50%): Rewrote preview switch patterns for Java 17.
 - Iter 09 (58%): JEI 1.20.1 button API update; KubeJS custom event bridge.
+- Iter 10 (100%): Forge 1.20.1 Gradle environment stabilized; Fixed KubeJS runtime mappings and unit tests; Production build validated.

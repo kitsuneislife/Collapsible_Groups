@@ -55,7 +55,7 @@ minecraft {
         client {
             workingDirectory file('runs/client')
             ideaModule "${rootProject.name}.main"
-            taskName 'Client'
+            taskName 'runClient'
             mods {
                 modClientRun {
                     source sourceSets.main
@@ -66,7 +66,7 @@ minecraft {
         server {
             workingDirectory file('runs/server')
             ideaModule "${rootProject.name}.main"
-            taskName 'Server'
+            taskName 'runServer'
             mods {
                 modServerRun {
                     source sourceSets.main
@@ -78,7 +78,7 @@ minecraft {
             workingDirectory file('runs/data')
             ideaModule "${rootProject.name}.main"
             args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-            taskName 'Data'
+            taskName 'runData'
             mods {
                 modDataRun {
                     source sourceSets.main
@@ -109,12 +109,15 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor("org.spongepowered:mixin:0.8.5:processor")
-    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
-    compileOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
-    runtimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-common-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}")
+    compileOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
+    runtimeOnly fg.deobf("mezz.jei:jei-${minecraft_version}-forge:${jei_version}")
 
     compileOnly "dev.latvian.mods:kubejs-forge:${kubejs_version}"
+    runtimeOnly fg.deobf("dev.latvian.mods:kubejs-forge:${kubejs_version}")
+    runtimeOnly fg.deobf("dev.latvian.mods:rhino-forge:2001.2.3-build.10")
+    runtimeOnly fg.deobf("dev.architectury:architectury-forge:9.2.14")
 
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
 

@@ -46,6 +46,12 @@ public interface IConfigProvider {
 	 */
 	default boolean shouldLoadMacawsSeries() { return false; }
 
+	default boolean shouldLoadAE2() { return false; }
+	default boolean shouldLoadChisel() { return false; }
+	default boolean shouldLoadApotheosis() { return false; }
+	default boolean shouldLoadEnderIO() { return false; }
+	default boolean shouldLoadIronsSpellbooks() { return false; }
+
 	/** Whether startup index verification should compare the optimized builder against a reference implementation. */
 	boolean debugStartupIndexVerificationEnabled();
 

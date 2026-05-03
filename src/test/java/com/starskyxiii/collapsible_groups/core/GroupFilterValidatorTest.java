@@ -15,7 +15,7 @@ class GroupFilterValidatorTest {
 		List<Component> errors = GroupFilterValidator.validateComponents(new GroupFilter.Id("item", "not a rl"));
 
 		assertEquals(1, errors.size());
-		TranslatableContents contents = assertInstanceOf(TranslatableContents.class, errors.getFirst().getContents());
+		TranslatableContents contents = assertInstanceOf(TranslatableContents.class, errors.get(0).getContents());
 		assertEquals("collapsible_groups.editor.rules.error.invalid_resource_location", contents.getKey());
 		assertEquals("not a rl", contents.getArgs()[0]);
 	}
@@ -29,7 +29,7 @@ class GroupFilterValidatorTest {
 		));
 
 		assertEquals(1, errors.size());
-		TranslatableContents contents = assertInstanceOf(TranslatableContents.class, errors.getFirst().getContents());
+		TranslatableContents contents = assertInstanceOf(TranslatableContents.class, errors.get(0).getContents());
 		assertEquals("collapsible_groups.editor.rules.error.component_path_grammar", contents.getKey());
 		assertEquals("bad path", contents.getArgs()[0]);
 	}
