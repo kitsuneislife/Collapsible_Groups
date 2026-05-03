@@ -53,6 +53,24 @@ public final class ForgeConfig implements IConfigProvider {
 	@Override public boolean shouldLoadIronsSpellbooks() {
 		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_IRONS_SPELLBOOKS.get() && net.minecraftforge.fml.ModList.get().isLoaded("irons_spellbooks");
 	}
+	@Override public boolean shouldLoadTinkersConstruct() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_TINKERS_CONSTRUCT.get() && net.minecraftforge.fml.ModList.get().isLoaded("tconstruct");
+	}
+	@Override public boolean shouldLoadBotania() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_BOTANIA.get() && net.minecraftforge.fml.ModList.get().isLoaded("botania");
+	}
+	@Override public boolean shouldLoadCreate() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_CREATE.get() && net.minecraftforge.fml.ModList.get().isLoaded("create");
+	}
+	@Override public boolean shouldLoadTravelersBackpack() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_TRAVELERS_BACKPACK.get() && net.minecraftforge.fml.ModList.get().isLoaded("travelersbackpack");
+	}
+	@Override public boolean shouldLoadAllTheOres() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_ALL_THE_ORES.get() && net.minecraftforge.fml.ModList.get().isLoaded("alltheores");
+	}
+	@Override public boolean shouldLoadFarmersDelight() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_FARMERS_DELIGHT.get() && net.minecraftforge.fml.ModList.get().isLoaded("farmersdelight");
+	}
 	@Override public boolean showManagerButton()                   { return SHOW_MANAGER_BUTTON.get(); }
 	@Override public boolean debugTimingEnabled()                  { return DEBUG_TIMING_LOGS.get(); }
 	@Override public boolean debugStartupIndexVerificationEnabled() { return DEBUG_STARTUP_INDEX_VERIFY.get(); }
@@ -91,6 +109,12 @@ public final class ForgeConfig implements IConfigProvider {
 	public static final ForgeConfigSpec.BooleanValue LOAD_APOTHEOSIS;
 	public static final ForgeConfigSpec.BooleanValue LOAD_ENDERIO;
 	public static final ForgeConfigSpec.BooleanValue LOAD_IRONS_SPELLBOOKS;
+	public static final ForgeConfigSpec.BooleanValue LOAD_TINKERS_CONSTRUCT;
+	public static final ForgeConfigSpec.BooleanValue LOAD_BOTANIA;
+	public static final ForgeConfigSpec.BooleanValue LOAD_CREATE;
+	public static final ForgeConfigSpec.BooleanValue LOAD_TRAVELERS_BACKPACK;
+	public static final ForgeConfigSpec.BooleanValue LOAD_ALL_THE_ORES;
+	public static final ForgeConfigSpec.BooleanValue LOAD_FARMERS_DELIGHT;
 
 	// ui
 
@@ -153,6 +177,12 @@ public final class ForgeConfig implements IConfigProvider {
 		LOAD_APOTHEOSIS = builder.comment("Whether to load built-in Apotheosis groups.").define("loadApotheosis", true);
 		LOAD_ENDERIO = builder.comment("Whether to load built-in EnderIO groups.").define("loadEnderIO", true);
 		LOAD_IRONS_SPELLBOOKS = builder.comment("Whether to load built-in Iron's Spellbooks groups.").define("loadIronsSpellbooks", true);
+		LOAD_TINKERS_CONSTRUCT = builder.comment("Whether to load built-in Tinkers' Construct groups.").define("loadTinkersConstruct", true);
+		LOAD_BOTANIA = builder.comment("Whether to load built-in Botania groups.").define("loadBotania", true);
+		LOAD_CREATE = builder.comment("Whether to load built-in Create groups.").define("loadCreate", true);
+		LOAD_TRAVELERS_BACKPACK = builder.comment("Whether to load built-in Traveler's Backpack groups.").define("loadTravelersBackpack", true);
+		LOAD_ALL_THE_ORES = builder.comment("Whether to load built-in AllTheOres groups.").define("loadAllTheOres", true);
+		LOAD_FARMERS_DELIGHT = builder.comment("Whether to load built-in Farmer's Delight groups.").define("loadFarmersDelight", true);
 		// Note: Chipped and RS2 integration groups are not yet implemented on Forge.
 		// IConfigProvider defaults shouldLoadChipped() and shouldLoadRS2() to false.
 		builder.pop(); // ModIntegration

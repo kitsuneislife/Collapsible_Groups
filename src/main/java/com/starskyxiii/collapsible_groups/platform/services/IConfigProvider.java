@@ -52,6 +52,13 @@ public interface IConfigProvider {
 	default boolean shouldLoadEnderIO() { return false; }
 	default boolean shouldLoadIronsSpellbooks() { return false; }
 
+	default boolean shouldLoadTinkersConstruct() { return false; }
+	default boolean shouldLoadBotania() { return false; }
+	default boolean shouldLoadCreate() { return false; }
+	default boolean shouldLoadTravelersBackpack() { return false; }
+	default boolean shouldLoadAllTheOres() { return false; }
+	default boolean shouldLoadFarmersDelight() { return false; }
+
 	/** Whether startup index verification should compare the optimized builder against a reference implementation. */
 	boolean debugStartupIndexVerificationEnabled();
 
