@@ -26,31 +26,32 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Cache Gradle packages
+    - name: Cache Gradle and ForgeGradle
       uses: actions/cache@v4
       with:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-
-    - name: Cache Forge/Minecraft artifacts
-      uses: actions/cache@v4
-      with:
-        path: |
           ~/.gradle/caches/forge_gradle
-          ~/.gradle/caches/minecraft
-        key: ${{ runner.os }}-forgecache-${{ hashFiles('gradle.properties') }}
+        key: ${{ runner.os }}-forge-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/gradle.properties') }}
         restore-keys: |
-          ${{ runner.os }}-forgecache-
+          ${{ runner.os }}-forge-
+          ${{ runner.os }}-gradle-
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build --no-daemon --stacktrace
+      run: ./gradlew build --no-daemon --stacktrace 2>&1 | tee build.log; exit ${PIPESTATUS[0]}
+      env:
+        GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.parallel=false"
+
+    - name: Upload build log on failure
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-log
+        path: build.log
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
@@ -63,4 +64,5 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
