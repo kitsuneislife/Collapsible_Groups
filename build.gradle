@@ -44,7 +44,6 @@ minecraft {
     mappings channel: 'official', version: minecraft_version
 
     copyIdeResources = true
-    reobf = false
 
     def at = file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
