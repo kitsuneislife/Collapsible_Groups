@@ -2,10 +2,10 @@ package com.starskyxiii.collapsible_groups.compat.jei.editor;
 
 import com.starskyxiii.collapsible_groups.i18n.ModTranslationKeys;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 
@@ -27,7 +27,7 @@ final class GroupEditorTooltipHelper {
 		// --- Left panel ---
 		if (left.hoveredItem >= 0 && left.hoveredItem < left.filteredItems().size()) {
 			ItemStack stack = left.filteredItems().get(left.hoveredItem);
-			List<Component> lines = new ArrayList<>(stack.getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.Default.NORMAL));
+			List<Component> lines = new ArrayList<>(stack.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL));
 			appendOtherGroups(lines, left.otherGroupsForItem(stack));
 			appendItemHint(lines, state, stack);
 			g.renderComponentTooltip(font, lines, mouseX, mouseY);
@@ -39,7 +39,7 @@ final class GroupEditorTooltipHelper {
 			ItemStack stack = right.groupItems().get(right.hoveredItem);
 			boolean isExact = state.isExactSelected(stack);
 			boolean isWhole = state.isWholeItemSelected(stack);
-			List<Component> lines = new ArrayList<>(stack.getTooltipLines(Item.TooltipContext.EMPTY, null, TooltipFlag.Default.NORMAL));
+			List<Component> lines = new ArrayList<>(stack.getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL));
 			if (!state.canEditContents()) lines.add(dim(ModTranslationKeys.EDITOR_RULES_CONTENTS_LOCKED));
 			else if (!isExact && !isWhole) lines.add(dim(ModTranslationKeys.EDITOR_TAG_MATCHED));
 			else if (isWhole) {
@@ -75,7 +75,7 @@ final class GroupEditorTooltipHelper {
 		if (groups.isEmpty()) return;
 		if (groups.size() == 1) {
 			lines.add(Component.translatable(ModTranslationKeys.EDITOR_ALREADY_IN_GROUP).withStyle(ChatFormatting.GOLD)
-				.append(Component.literal(groups.getFirst()).withStyle(ChatFormatting.YELLOW)));
+				.append(Component.literal(groups.get(0)).withStyle(ChatFormatting.YELLOW)));
 			return;
 		}
 		lines.add(Component.translatable(ModTranslationKeys.EDITOR_ALREADY_IN_GROUPS).withStyle(ChatFormatting.GOLD));

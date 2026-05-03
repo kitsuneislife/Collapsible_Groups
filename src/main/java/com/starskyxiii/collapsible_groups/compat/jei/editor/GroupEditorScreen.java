@@ -205,7 +205,7 @@ public class GroupEditorScreen extends Screen {
 
     @Override
     public void render(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
-        renderBackground(g, mouseX, mouseY, partialTicks);
+        renderBackground(g);
 
         int headerH  = EditorLayout.HEADER_HEIGHT;
         int footerY  = this.height - EditorLayout.FOOTER_HEIGHT;
@@ -375,18 +375,18 @@ public class GroupEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseScrolled(double mx, double my, double dx, double dy) {
+    public boolean mouseScrolled(double mx, double my, double delta) {
         if (activeGroupTab == GroupTab.RULES && rulesPanel.isModalOpen()) {
-            rulesPanel.mouseScrolled(mx, my, dy);
+            rulesPanel.mouseScrolled(mx, my, delta);
             return true;
         }
         if (activeGroupTab == GroupTab.CONTENTS) {
-            if (leftPanel.mouseScrolled(mx, my, dy, layout))  return true;
-            if (rightPanel.mouseScrolled(mx, my, dy, layout)) return true;
+            if (leftPanel.mouseScrolled(mx, my, delta, layout))  return true;
+            if (rightPanel.mouseScrolled(mx, my, delta, layout)) return true;
         } else {
-            if (rulesPanel.mouseScrolled(mx, my, dy)) return true;
+            if (rulesPanel.mouseScrolled(mx, my, delta)) return true;
         }
-        return super.mouseScrolled(mx, my, dx, dy);
+        return super.mouseScrolled(mx, my, delta);
     }
 
     @Override

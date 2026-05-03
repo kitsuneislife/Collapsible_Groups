@@ -218,7 +218,7 @@ final class GroupEditorState {
 		if (!errors.isEmpty()) {
 			return List.of(
 				Component.translatable(ModTranslationKeys.EDITOR_SAVE_ERROR),
-				errors.getFirst()
+				errors.get(0)
 			);
 		}
 		return List.of();

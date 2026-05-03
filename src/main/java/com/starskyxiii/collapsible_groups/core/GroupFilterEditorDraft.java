@@ -194,7 +194,7 @@ public final class GroupFilterEditorDraft {
 			return Optional.empty();
 		}
 		if (nodes.size() == 1) {
-			return Optional.of(nodes.getFirst());
+			return Optional.of(nodes.get(0));
 		}
 		return Optional.of(Filters.any(nodes.toArray(GroupFilter[]::new)));
 	}
@@ -208,68 +208,73 @@ public final class GroupFilterEditorDraft {
 			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
 		}
 
-		return switch (filter) {
-			case GroupFilter.Any any -> {
-				if (any.children().isEmpty()) {
-					unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
-					yield false;
+		if (filter instanceof GroupFilter.Any any) {
+			if (any.children().isEmpty()) {
+				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
+				return false;
+			}
+			if (depth > 0) {
+				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
+			}
+			for (GroupFilter child : any.children()) {
+				if (!collectSupportedNodes(child, draft, unsupportedNodeKinds, depth + 1, true)) {
+					return false;
 				}
-				if (depth > 0) {
-					unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
-				}
-				for (GroupFilter child : any.children()) {
-					if (!collectSupportedNodes(child, draft, unsupportedNodeKinds, depth + 1, true)) {
-						yield false;
-					}
-				}
-				yield true;
 			}
-			case GroupFilter.Id id -> addIdNode(id, draft);
-			case GroupFilter.Tag tag -> addTagNode(tag, draft);
-			case GroupFilter.ExactStack stack -> draft.explicitItemSelectors.add(STACK_PREFIX + stack.encodedStack());
-			case GroupFilter.BlockTag ignored -> {
-				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.BLOCK_TAG);
-				yield false;
+			return true;
+		}
+		if (filter instanceof GroupFilter.Id id) {
+			return addIdNode(id, draft);
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			return addTagNode(tag, draft);
+		}
+		if (filter instanceof GroupFilter.ExactStack stack) {
+			return draft.explicitItemSelectors.add(STACK_PREFIX + stack.encodedStack());
+		}
+		if (filter instanceof GroupFilter.BlockTag) {
+			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.BLOCK_TAG);
+			return false;
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith) {
+			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.ITEM_PATH_STARTS_WITH);
+			return false;
+		}
+		if (filter instanceof GroupFilter.ItemPathEndsWith) {
+			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.ITEM_PATH_ENDS_WITH);
+			return false;
+		}
+		if (filter instanceof GroupFilter.All all) {
+			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.ALL);
+			if (all.children().stream().anyMatch(GroupFilterEditorDraft::isComposite)) {
+				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
 			}
-			case GroupFilter.ItemPathStartsWith ignored -> {
-				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.ITEM_PATH_STARTS_WITH);
-				yield false;
+			for (GroupFilter child : all.children()) {
+				collectSupportedNodes(child, draft, unsupportedNodeKinds, depth + 1, true);
 			}
-			case GroupFilter.ItemPathEndsWith ignored -> {
-				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.ITEM_PATH_ENDS_WITH);
-				yield false;
+			return false;
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NOT);
+			if (isComposite(not.child())) {
+				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
 			}
-			case GroupFilter.All all -> {
-				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.ALL);
-				if (all.children().stream().anyMatch(GroupFilterEditorDraft::isComposite)) {
-					unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
-				}
-				for (GroupFilter child : all.children()) {
-					collectSupportedNodes(child, draft, unsupportedNodeKinds, depth + 1, true);
-				}
-				yield false;
-			}
-			case GroupFilter.Not not -> {
-				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NOT);
-				if (isComposite(not.child())) {
-					unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NESTED_STRUCTURE);
-				}
-				collectSupportedNodes(not.child(), draft, unsupportedNodeKinds, depth + 1, true);
-				yield false;
-			}
-			case GroupFilter.Namespace ignored -> {
-				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NAMESPACE);
-				yield false;
-			}
-			case GroupFilter.HasComponent ignored -> {
-				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.HAS_COMPONENT);
-				yield false;
-			}
-			case GroupFilter.ComponentPath ignored -> {
-				unsupportedNodeKinds.add(UnsupportedEditorNodeKind.COMPONENT_PATH);
-				yield false;
-			}
-		};
+			collectSupportedNodes(not.child(), draft, unsupportedNodeKinds, depth + 1, true);
+			return false;
+		}
+		if (filter instanceof GroupFilter.Namespace) {
+			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.NAMESPACE);
+			return false;
+		}
+		if (filter instanceof GroupFilter.HasComponent) {
+			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.HAS_COMPONENT);
+			return false;
+		}
+		if (filter instanceof GroupFilter.ComponentPath) {
+			unsupportedNodeKinds.add(UnsupportedEditorNodeKind.COMPONENT_PATH);
+			return false;
+		}
+		return false;
 	}
 
 	private static boolean isComposite(GroupFilter filter) {

@@ -29,41 +29,55 @@ public final class ItemFilterQueryCompiler {
 	}
 
 	private static ItemQueryPlan compileNormalized(GroupFilter filter) {
-		return switch (filter) {
-			case GroupFilter.Any any -> compileAny(any.children());
-			case GroupFilter.All all -> compileAll(all.children());
-			case GroupFilter.Not not -> compileNot(not.child());
-			case GroupFilter.Id id -> compileId(id);
-			case GroupFilter.Tag tag -> compileTag(tag);
-			case GroupFilter.BlockTag blockTag -> compileBlockTag(blockTag);
-			case GroupFilter.ItemPathStartsWith ignored -> FULL_SCAN;
-			case GroupFilter.ItemPathEndsWith ignored -> FULL_SCAN;
-			case GroupFilter.Namespace namespace -> compileNamespace(namespace);
-			case GroupFilter.ExactStack exactStack -> compileExactStack(exactStack);
-			case GroupFilter.HasComponent ignored -> FULL_SCAN;
-			case GroupFilter.ComponentPath ignored -> FULL_SCAN;
-		};
+		if (filter instanceof GroupFilter.Any any) {
+			return compileAny(any.children());
+		}
+		if (filter instanceof GroupFilter.All all) {
+			return compileAll(all.children());
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			return compileNot(not.child());
+		}
+		if (filter instanceof GroupFilter.Id id) {
+			return compileId(id);
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			return compileTag(tag);
+		}
+		if (filter instanceof GroupFilter.BlockTag blockTag) {
+			return compileBlockTag(blockTag);
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith
+			|| filter instanceof GroupFilter.ItemPathEndsWith
+			|| filter instanceof GroupFilter.HasComponent
+			|| filter instanceof GroupFilter.ComponentPath) {
+			return FULL_SCAN;
+		}
+		if (filter instanceof GroupFilter.Namespace namespace) {
+			return compileNamespace(namespace);
+		}
+		if (filter instanceof GroupFilter.ExactStack exactStack) {
+			return compileExactStack(exactStack);
+		}
+		return FULL_SCAN;
 	}
 
 	private static ItemQueryPlan compileAny(List<GroupFilter> children) {
 		List<CandidatePlan> candidates = new ArrayList<>();
 		for (GroupFilter child : children) {
 			ItemQueryPlan plan = compileNormalized(child);
-			switch (plan) {
-				case AllItemsPlan ignored -> {
-					return ALL_ITEMS;
-				}
-				case EmptyPlan ignored -> {
-					// no-op
-				}
-				case CandidatePlan candidate -> candidates.add(candidate);
-				case FullScanPlan ignored -> {
-					return FULL_SCAN;
-				}
+			if (plan instanceof AllItemsPlan) {
+				return ALL_ITEMS;
+			}
+			if (plan instanceof FullScanPlan) {
+				return FULL_SCAN;
+			}
+			if (plan instanceof CandidatePlan candidate) {
+				candidates.add(candidate);
 			}
 		}
 		if (candidates.isEmpty()) return EMPTY;
-		if (candidates.size() == 1) return candidates.getFirst();
+		if (candidates.size() == 1) return candidates.get(0);
 		List<CandidatePlan> stableCandidates = List.copyOf(candidates);
 		return new CandidatePlan(index -> {
 			List<List<IngredientFilterItemIndex.ItemEntry>> buckets = new ArrayList<>(stableCandidates.size());
@@ -79,25 +93,21 @@ public final class ItemFilterQueryCompiler {
 		boolean sawNonAllItems = false;
 		for (GroupFilter child : children) {
 			ItemQueryPlan plan = compileNormalized(child);
-			switch (plan) {
-				case EmptyPlan ignored -> {
-					return EMPTY;
-				}
-				case AllItemsPlan ignored -> {
-					// no-op
-				}
-				case CandidatePlan candidate -> {
-					sawNonAllItems = true;
-					candidates.add(candidate);
-				}
-				case FullScanPlan ignored -> {
-					sawNonAllItems = true;
-				}
+			if (plan instanceof EmptyPlan) {
+				return EMPTY;
+			}
+			if (plan instanceof CandidatePlan candidate) {
+				sawNonAllItems = true;
+				candidates.add(candidate);
+				continue;
+			}
+			if (plan instanceof FullScanPlan) {
+				sawNonAllItems = true;
 			}
 		}
 		if (!sawNonAllItems) return ALL_ITEMS;
 		if (candidates.isEmpty()) return FULL_SCAN;
-		if (candidates.size() == 1) return candidates.getFirst();
+		if (candidates.size() == 1) return candidates.get(0);
 		List<CandidatePlan> stableCandidates = List.copyOf(candidates);
 		return new CandidatePlan(index -> {
 			List<IngredientFilterItemIndex.ItemEntry> smallest = null;
@@ -112,12 +122,14 @@ public final class ItemFilterQueryCompiler {
 	}
 
 	private static ItemQueryPlan compileNot(GroupFilter child) {
-		return switch (compileNormalized(child)) {
-			case EmptyPlan ignored -> ALL_ITEMS;
-			case AllItemsPlan ignored -> EMPTY;
-			case CandidatePlan ignored -> FULL_SCAN;
-			case FullScanPlan ignored -> FULL_SCAN;
-		};
+		ItemQueryPlan plan = compileNormalized(child);
+		if (plan instanceof EmptyPlan) {
+			return ALL_ITEMS;
+		}
+		if (plan instanceof AllItemsPlan) {
+			return EMPTY;
+		}
+		return FULL_SCAN;
 	}
 
 	private static ItemQueryPlan compileId(GroupFilter.Id id) {

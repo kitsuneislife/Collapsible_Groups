@@ -274,7 +274,7 @@ public final class GroupConfig {
 
 		if (!group.iconIds().isEmpty()) {
 			if (group.iconIds().size() == 1) {
-				obj.addProperty("icon", group.iconIds().getFirst());
+				obj.addProperty("icon", group.iconIds().get(0));
 			} else {
 				JsonArray iconArr = new JsonArray();
 				group.iconIds().forEach(iconArr::add);
@@ -363,48 +363,65 @@ public final class GroupConfig {
 	// package-private for testing (GroupConfigComponentPathTest)
 	static JsonObject serializeFilter(GroupFilter filter) {
 		JsonObject obj = new JsonObject();
-		switch (filter) {
-			case GroupFilter.Any any -> {
-				JsonArray arr = new JsonArray();
-				any.children().forEach(child -> arr.add(serializeFilter(child)));
-				obj.add("any", arr);
-			}
-			case GroupFilter.All all -> {
-				JsonArray arr = new JsonArray();
-				all.children().forEach(child -> arr.add(serializeFilter(child)));
-				obj.add("all", arr);
-			}
-			case GroupFilter.Not not -> obj.add("not", serializeFilter(not.child()));
-			case GroupFilter.Id id -> {
-				obj.addProperty("type", id.ingredientType());
-				obj.addProperty("id", id.id());
-			}
-			case GroupFilter.Tag tag -> {
-				obj.addProperty("type", tag.ingredientType());
-				obj.addProperty("tag", tag.tag());
-			}
-			case GroupFilter.BlockTag blockTag -> obj.addProperty("block_tag", blockTag.tag());
-			case GroupFilter.ItemPathStartsWith startsWith -> obj.addProperty("item_path_starts_with", startsWith.prefix());
-			case GroupFilter.ItemPathEndsWith endsWith -> obj.addProperty("item_path_ends_with", endsWith.suffix());
-			case GroupFilter.Namespace namespace -> {
-				obj.addProperty("type", namespace.ingredientType());
-				obj.addProperty("namespace", namespace.namespace());
-			}
-			case GroupFilter.ExactStack stack -> {
-				obj.addProperty("type", "item");
-				obj.addProperty("stack", stack.encodedStack());
-			}
-			case GroupFilter.HasComponent hc -> {
-				obj.addProperty("type", "item");
-				obj.addProperty("component", hc.componentTypeId());
-				obj.addProperty("value", hc.encodedValue());
-			}
-			case GroupFilter.ComponentPath cp -> {
-				obj.addProperty("type", "item");
-				obj.addProperty("component", cp.componentTypeId());
-				obj.addProperty("path", cp.path());
-				obj.addProperty("value", cp.expectedValue());
-			}
+		if (filter instanceof GroupFilter.Any any) {
+			JsonArray arr = new JsonArray();
+			any.children().forEach(child -> arr.add(serializeFilter(child)));
+			obj.add("any", arr);
+			return obj;
+		}
+		if (filter instanceof GroupFilter.All all) {
+			JsonArray arr = new JsonArray();
+			all.children().forEach(child -> arr.add(serializeFilter(child)));
+			obj.add("all", arr);
+			return obj;
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			obj.add("not", serializeFilter(not.child()));
+			return obj;
+		}
+		if (filter instanceof GroupFilter.Id id) {
+			obj.addProperty("type", id.ingredientType());
+			obj.addProperty("id", id.id());
+			return obj;
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			obj.addProperty("type", tag.ingredientType());
+			obj.addProperty("tag", tag.tag());
+			return obj;
+		}
+		if (filter instanceof GroupFilter.BlockTag blockTag) {
+			obj.addProperty("block_tag", blockTag.tag());
+			return obj;
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith startsWith) {
+			obj.addProperty("item_path_starts_with", startsWith.prefix());
+			return obj;
+		}
+		if (filter instanceof GroupFilter.ItemPathEndsWith endsWith) {
+			obj.addProperty("item_path_ends_with", endsWith.suffix());
+			return obj;
+		}
+		if (filter instanceof GroupFilter.Namespace namespace) {
+			obj.addProperty("type", namespace.ingredientType());
+			obj.addProperty("namespace", namespace.namespace());
+			return obj;
+		}
+		if (filter instanceof GroupFilter.ExactStack stack) {
+			obj.addProperty("type", "item");
+			obj.addProperty("stack", stack.encodedStack());
+			return obj;
+		}
+		if (filter instanceof GroupFilter.HasComponent hc) {
+			obj.addProperty("type", "item");
+			obj.addProperty("component", hc.componentTypeId());
+			obj.addProperty("value", hc.encodedValue());
+			return obj;
+		}
+		if (filter instanceof GroupFilter.ComponentPath cp) {
+			obj.addProperty("type", "item");
+			obj.addProperty("component", cp.componentTypeId());
+			obj.addProperty("path", cp.path());
+			obj.addProperty("value", cp.expectedValue());
 		}
 		return obj;
 	}

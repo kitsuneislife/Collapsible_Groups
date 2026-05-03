@@ -286,74 +286,73 @@ public final class GroupFilterRuleDraft {
 	}
 
 	private static Node decodeNode(GroupFilter filter) {
-		return switch (filter) {
-			case GroupFilter.Any any -> {
-				Node node = new Node(NodeKind.ANY);
-				any.children().forEach(child -> attachChild(node, decodeNode(child)));
-				yield node;
-			}
-			case GroupFilter.All all -> {
-				Node node = new Node(NodeKind.ALL);
-				all.children().forEach(child -> attachChild(node, decodeNode(child)));
-				yield node;
-			}
-			case GroupFilter.Not not -> {
-				Node node = new Node(NodeKind.NOT);
-				attachChild(node, decodeNode(not.child()));
-				yield node;
-			}
-			case GroupFilter.Id id -> {
-				Node node = new Node(NodeKind.ID);
-				node.ingredientType = id.ingredientType();
-				node.primaryValue = id.id();
-				yield node;
-			}
-			case GroupFilter.Tag tag -> {
-				Node node = new Node(NodeKind.TAG);
-				node.ingredientType = tag.ingredientType();
-				node.primaryValue = tag.tag();
-				yield node;
-			}
-			case GroupFilter.BlockTag blockTag -> {
-				Node node = new Node(NodeKind.BLOCK_TAG);
-				node.primaryValue = blockTag.tag();
-				yield node;
-			}
-			case GroupFilter.ItemPathStartsWith startsWith -> {
-				Node node = new Node(NodeKind.ITEM_PATH_STARTS_WITH);
-				node.primaryValue = startsWith.prefix();
-				yield node;
-			}
-			case GroupFilter.ItemPathEndsWith endsWith -> {
-				Node node = new Node(NodeKind.ITEM_PATH_ENDS_WITH);
-				node.primaryValue = endsWith.suffix();
-				yield node;
-			}
-			case GroupFilter.Namespace namespace -> {
-				Node node = new Node(NodeKind.NAMESPACE);
-				node.ingredientType = namespace.ingredientType();
-				node.primaryValue = namespace.namespace();
-				yield node;
-			}
-			case GroupFilter.ExactStack exactStack -> {
-				Node node = new Node(NodeKind.EXACT_STACK);
-				node.primaryValue = exactStack.encodedStack();
-				yield node;
-			}
-			case GroupFilter.HasComponent hasComponent -> {
-				Node node = new Node(NodeKind.HAS_COMPONENT);
-				node.primaryValue = hasComponent.componentTypeId();
-				node.secondaryValue = hasComponent.encodedValue();
-				yield node;
-			}
-			case GroupFilter.ComponentPath componentPath -> {
-				Node node = new Node(NodeKind.COMPONENT_PATH);
-				node.primaryValue = componentPath.componentTypeId();
-				node.secondaryValue = componentPath.path();
-				node.tertiaryValue = componentPath.expectedValue();
-				yield node;
-			}
-		};
+		if (filter instanceof GroupFilter.Any any) {
+			Node node = new Node(NodeKind.ANY);
+			any.children().forEach(child -> attachChild(node, decodeNode(child)));
+			return node;
+		}
+		if (filter instanceof GroupFilter.All all) {
+			Node node = new Node(NodeKind.ALL);
+			all.children().forEach(child -> attachChild(node, decodeNode(child)));
+			return node;
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			Node node = new Node(NodeKind.NOT);
+			attachChild(node, decodeNode(not.child()));
+			return node;
+		}
+		if (filter instanceof GroupFilter.Id id) {
+			Node node = new Node(NodeKind.ID);
+			node.ingredientType = id.ingredientType();
+			node.primaryValue = id.id();
+			return node;
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			Node node = new Node(NodeKind.TAG);
+			node.ingredientType = tag.ingredientType();
+			node.primaryValue = tag.tag();
+			return node;
+		}
+		if (filter instanceof GroupFilter.BlockTag blockTag) {
+			Node node = new Node(NodeKind.BLOCK_TAG);
+			node.primaryValue = blockTag.tag();
+			return node;
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith startsWith) {
+			Node node = new Node(NodeKind.ITEM_PATH_STARTS_WITH);
+			node.primaryValue = startsWith.prefix();
+			return node;
+		}
+		if (filter instanceof GroupFilter.ItemPathEndsWith endsWith) {
+			Node node = new Node(NodeKind.ITEM_PATH_ENDS_WITH);
+			node.primaryValue = endsWith.suffix();
+			return node;
+		}
+		if (filter instanceof GroupFilter.Namespace namespace) {
+			Node node = new Node(NodeKind.NAMESPACE);
+			node.ingredientType = namespace.ingredientType();
+			node.primaryValue = namespace.namespace();
+			return node;
+		}
+		if (filter instanceof GroupFilter.ExactStack exactStack) {
+			Node node = new Node(NodeKind.EXACT_STACK);
+			node.primaryValue = exactStack.encodedStack();
+			return node;
+		}
+		if (filter instanceof GroupFilter.HasComponent hasComponent) {
+			Node node = new Node(NodeKind.HAS_COMPONENT);
+			node.primaryValue = hasComponent.componentTypeId();
+			node.secondaryValue = hasComponent.encodedValue();
+			return node;
+		}
+		if (filter instanceof GroupFilter.ComponentPath componentPath) {
+			Node node = new Node(NodeKind.COMPONENT_PATH);
+			node.primaryValue = componentPath.componentTypeId();
+			node.secondaryValue = componentPath.path();
+			node.tertiaryValue = componentPath.expectedValue();
+			return node;
+		}
+		throw new IllegalStateException("Unsupported filter node: " + filter);
 	}
 
 	private static @Nullable GroupFilter encodeNode(Node node) {
@@ -364,7 +363,7 @@ public final class GroupFilterRuleDraft {
 				if (node.children.size() != 1) {
 					yield null;
 				}
-				GroupFilter child = encodeNode(node.children.getFirst());
+				GroupFilter child = encodeNode(node.children.get(0));
 				yield child == null ? null : Filters.not(child);
 			}
 			case ID -> Filters.id(node.ingredientType, node.primaryValue);

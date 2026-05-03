@@ -36,59 +36,85 @@ public final class GroupFilterClauseFormatter {
 	}
 
 	private static void appendClauses(GroupFilter filter, int depth, List<Clause> clauses) {
-		switch (filter) {
-			case GroupFilter.Any any -> {
-				clauses.add(new Clause(depth, "ANY", null));
-				for (GroupFilter child : any.children()) {
-					appendClauses(child, depth + 1, clauses);
-				}
+		if (filter instanceof GroupFilter.Any any) {
+			clauses.add(new Clause(depth, "ANY", null));
+			for (GroupFilter child : any.children()) {
+				appendClauses(child, depth + 1, clauses);
 			}
-			case GroupFilter.All all -> {
-				clauses.add(new Clause(depth, "ALL", null));
-				for (GroupFilter child : all.children()) {
-					appendClauses(child, depth + 1, clauses);
-				}
+			return;
+		}
+		if (filter instanceof GroupFilter.All all) {
+			clauses.add(new Clause(depth, "ALL", null));
+			for (GroupFilter child : all.children()) {
+				appendClauses(child, depth + 1, clauses);
 			}
-			case GroupFilter.Not not -> {
-				clauses.add(new Clause(depth, "NOT", null));
-				appendClauses(not.child(), depth + 1, clauses);
-			}
-			case GroupFilter.Id id ->
-				clauses.add(new Clause(depth, typedLabel(id.ingredientType(), "Id"), id.id()));
-			case GroupFilter.Tag tag ->
-				clauses.add(new Clause(depth, typedLabel(tag.ingredientType(), "Tag"), tag.tag()));
-			case GroupFilter.BlockTag blockTag ->
-				clauses.add(new Clause(depth, "Block Tag", blockTag.tag()));
-			case GroupFilter.ItemPathStartsWith startsWith ->
-				clauses.add(new Clause(depth, "Item Path Starts With", startsWith.prefix()));
-			case GroupFilter.ItemPathEndsWith endsWith ->
-				clauses.add(new Clause(depth, "Item Path Ends With", endsWith.suffix()));
-			case GroupFilter.Namespace namespace ->
-				clauses.add(new Clause(depth, typedLabel(namespace.ingredientType(), "Namespace"), namespace.namespace()));
-			case GroupFilter.ExactStack stack ->
-				clauses.add(new Clause(depth, "Exact Stack", stack.encodedStack()));
-			case GroupFilter.HasComponent hc ->
-				clauses.add(new Clause(depth, "Has Component", hc.componentTypeId() + " = " + hc.encodedValue()));
-			case GroupFilter.ComponentPath cp ->
-				clauses.add(new Clause(depth, "Component Path", cp.componentTypeId() + " / " + cp.path() + " = " + cp.expectedValue()));
+			return;
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			clauses.add(new Clause(depth, "NOT", null));
+			appendClauses(not.child(), depth + 1, clauses);
+			return;
+		}
+		if (filter instanceof GroupFilter.Id id) {
+			clauses.add(new Clause(depth, typedLabel(id.ingredientType(), "Id"), id.id()));
+			return;
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			clauses.add(new Clause(depth, typedLabel(tag.ingredientType(), "Tag"), tag.tag()));
+			return;
+		}
+		if (filter instanceof GroupFilter.BlockTag blockTag) {
+			clauses.add(new Clause(depth, "Block Tag", blockTag.tag()));
+			return;
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith startsWith) {
+			clauses.add(new Clause(depth, "Item Path Starts With", startsWith.prefix()));
+			return;
+		}
+		if (filter instanceof GroupFilter.ItemPathEndsWith endsWith) {
+			clauses.add(new Clause(depth, "Item Path Ends With", endsWith.suffix()));
+			return;
+		}
+		if (filter instanceof GroupFilter.Namespace namespace) {
+			clauses.add(new Clause(depth, typedLabel(namespace.ingredientType(), "Namespace"), namespace.namespace()));
+			return;
+		}
+		if (filter instanceof GroupFilter.ExactStack stack) {
+			clauses.add(new Clause(depth, "Exact Stack", stack.encodedStack()));
+			return;
+		}
+		if (filter instanceof GroupFilter.HasComponent hc) {
+			clauses.add(new Clause(depth, "Has Component", hc.componentTypeId() + " = " + hc.encodedValue()));
+			return;
+		}
+		if (filter instanceof GroupFilter.ComponentPath cp) {
+			clauses.add(new Clause(depth, "Component Path", cp.componentTypeId() + " / " + cp.path() + " = " + cp.expectedValue()));
 		}
 	}
 
 	private static boolean hasSpecialClause(GroupFilter filter) {
-		return switch (filter) {
-			case GroupFilter.Id ignored -> false;
-			case GroupFilter.ExactStack ignored -> false;
-			case GroupFilter.HasComponent ignored -> true;
-			case GroupFilter.ComponentPath ignored -> true;
-			case GroupFilter.Any any -> any.children().stream().anyMatch(GroupFilterClauseFormatter::hasSpecialClause);
-			case GroupFilter.Tag ignored -> true;
-			case GroupFilter.BlockTag ignored -> true;
-			case GroupFilter.ItemPathStartsWith ignored -> true;
-			case GroupFilter.ItemPathEndsWith ignored -> true;
-			case GroupFilter.Namespace ignored -> true;
-			case GroupFilter.All ignored -> true;
-			case GroupFilter.Not ignored -> true;
-		};
+		if (filter instanceof GroupFilter.Id) {
+			return false;
+		}
+		if (filter instanceof GroupFilter.ExactStack) {
+			return false;
+		}
+		if (filter instanceof GroupFilter.HasComponent || filter instanceof GroupFilter.ComponentPath) {
+			return true;
+		}
+		if (filter instanceof GroupFilter.Any any) {
+			return any.children().stream().anyMatch(GroupFilterClauseFormatter::hasSpecialClause);
+		}
+		if (filter instanceof GroupFilter.Tag
+			|| filter instanceof GroupFilter.BlockTag
+			|| filter instanceof GroupFilter.ItemPathStartsWith
+			|| filter instanceof GroupFilter.ItemPathEndsWith
+			|| filter instanceof GroupFilter.Namespace
+			|| filter instanceof GroupFilter.All
+			|| filter instanceof GroupFilter.Not) {
+			return true;
+		}
+		return false;
 	}
 
 	private static String typedLabel(String ingredientType, String baseLabel) {

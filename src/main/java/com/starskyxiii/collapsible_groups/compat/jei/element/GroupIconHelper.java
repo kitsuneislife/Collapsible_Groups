@@ -32,11 +32,6 @@ public final class GroupIconHelper implements IIngredientHelper<GroupIcon> {
 	}
 
 	@Override
-	public Object getUid(GroupIcon ingredient, UidContext context) {
-		return ingredient.groupId();
-	}
-
-	@Override
 	public ResourceLocation getResourceLocation(GroupIcon ingredient) {
 		return new ResourceLocation("collapsible_groups", sanitizePath(ingredient.groupId()));
 	}

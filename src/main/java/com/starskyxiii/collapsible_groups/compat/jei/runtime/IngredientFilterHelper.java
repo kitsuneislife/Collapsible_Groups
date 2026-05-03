@@ -126,12 +126,18 @@ public final class IngredientFilterHelper {
 				continue;
 			}
 
-			List<IngredientFilterItemIndex.ItemEntry> domain = switch (ItemFilterQueryCompiler.compile(group.filter())) {
-				case ItemFilterQueryCompiler.EmptyPlan ignored -> List.of();
-				case ItemFilterQueryCompiler.AllItemsPlan ignored -> itemIndex.orderedEntries();
-				case ItemFilterQueryCompiler.CandidatePlan candidate -> candidate.collectCandidates(itemIndex);
-				case ItemFilterQueryCompiler.FullScanPlan ignored -> itemIndex.orderedEntries();
-			};
+			ItemFilterQueryCompiler.ItemQueryPlan plan = ItemFilterQueryCompiler.compile(group.filter());
+			List<IngredientFilterItemIndex.ItemEntry> domain;
+			if (plan instanceof ItemFilterQueryCompiler.EmptyPlan) {
+				domain = List.of();
+			} else if (plan instanceof ItemFilterQueryCompiler.AllItemsPlan
+				|| plan instanceof ItemFilterQueryCompiler.FullScanPlan) {
+				domain = itemIndex.orderedEntries();
+			} else if (plan instanceof ItemFilterQueryCompiler.CandidatePlan candidate) {
+				domain = candidate.collectCandidates(itemIndex);
+			} else {
+				domain = itemIndex.orderedEntries();
+			}
 
 			if (domain.isEmpty()) {
 				continue;

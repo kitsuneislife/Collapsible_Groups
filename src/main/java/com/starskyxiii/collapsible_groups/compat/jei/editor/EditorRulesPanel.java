@@ -368,7 +368,7 @@ final class EditorRulesPanel {
         EditorChrome.Rect r = statusRect();
         int ty = r.y() + (r.height() - font.lineHeight) / 2;
         List<Component> errors = state.currentValidationErrors();
-        String text  = errors.isEmpty() ? state.filterSummary() : errors.getFirst().getString();
+        String text  = errors.isEmpty() ? state.filterSummary() : errors.get(0).getString();
         int    color = errors.isEmpty() ? COL_HINT : COL_ERROR;
         g.drawString(font, text, r.x() + PAD, ty, color, false);
     }

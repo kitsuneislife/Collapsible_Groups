@@ -4,7 +4,7 @@ import com.starskyxiii.collapsible_groups.compat.jei.manager.GroupsButtonControl
 import com.starskyxiii.collapsible_groups.compat.jei.ui.GroupBorderRenderer;
 import com.starskyxiii.collapsible_groups.platform.Services;
 import mezz.jei.common.util.ImmutableRect2i;
-import mezz.jei.gui.elements.IconButton;
+import mezz.jei.gui.elements.GuiIconToggleButton;
 import mezz.jei.gui.input.GuiTextFieldFilter;
 import mezz.jei.gui.input.IUserInputHandler;
 import mezz.jei.gui.input.handlers.CombinedInputHandler;
@@ -24,21 +24,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinIngredientListOverlay {
 	@Unique private static final int CG_BUTTON_GAP = 2;
 
-	@Shadow private IconButton configButton;
+	@Shadow private GuiIconToggleButton configButton;
 	@Shadow private GuiTextFieldFilter searchField;
 	@Shadow public abstract boolean isListDisplayed();
 
-	@Unique private IconButton cg$groupsButton;
+	@Unique private GroupsButtonController cg$groupsButton;
 
 	@Inject(method = "<init>", at = @At("TAIL"))
 	private void cg$onInit(CallbackInfo ci) {
-		this.cg$groupsButton = new IconButton(new GroupsButtonController());
+		this.cg$groupsButton = new GroupsButtonController();
 	}
 
 	@Inject(method = "updateBounds", at = @At("TAIL"))
 	private void cg$updateBounds(CallbackInfo ci) {
 		if (!Services.CONFIG.showManagerButton()) return;
-		ImmutableRect2i configArea = ((MixinIconButtonAccessor) (Object) configButton).cg$getArea();
+		ImmutableRect2i configArea = ((MixinGuiIconToggleButtonAccessor) (Object) configButton).cg$getArea();
 		if (configArea == null || configArea.isEmpty()) return;
 		ImmutableRect2i groupsArea = new ImmutableRect2i(
 			configArea.getX() - configArea.getWidth() - CG_BUTTON_GAP,

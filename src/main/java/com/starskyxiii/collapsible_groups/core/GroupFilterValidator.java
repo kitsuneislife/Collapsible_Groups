@@ -47,68 +47,85 @@ public final class GroupFilterValidator {
 	}
 
 	private static void validateNode(GroupFilter filter, List<ValidationError> errors) {
-		switch (filter) {
-			case GroupFilter.Any any -> {
-				if (any.children().isEmpty()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_ANY_EMPTY);
-				}
-				any.children().forEach(child -> validateNode(child, errors));
+		if (filter instanceof GroupFilter.Any any) {
+			if (any.children().isEmpty()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_ANY_EMPTY);
 			}
-			case GroupFilter.All all -> {
-				if (all.children().isEmpty()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_ALL_EMPTY);
-				}
-				all.children().forEach(child -> validateNode(child, errors));
+			any.children().forEach(child -> validateNode(child, errors));
+			return;
+		}
+		if (filter instanceof GroupFilter.All all) {
+			if (all.children().isEmpty()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_ALL_EMPTY);
 			}
-			case GroupFilter.Not not -> validateNode(not.child(), errors);
-			case GroupFilter.Id id -> {
-				validateType(id.ingredientType(), errors, "id");
-				validateResourceLocation(id.id(), errors, "id");
+			all.children().forEach(child -> validateNode(child, errors));
+			return;
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			validateNode(not.child(), errors);
+			return;
+		}
+		if (filter instanceof GroupFilter.Id id) {
+			validateType(id.ingredientType(), errors, "id");
+			validateResourceLocation(id.id(), errors, "id");
+			return;
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			validateType(tag.ingredientType(), errors, "tag");
+			validateResourceLocation(tag.tag(), errors, "tag");
+			return;
+		}
+		if (filter instanceof GroupFilter.BlockTag blockTag) {
+			validateResourceLocation(blockTag.tag(), errors, "block_tag");
+			return;
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith startsWith) {
+			validatePartialPath(startsWith.prefix(), errors, "item_path_starts_with");
+			return;
+		}
+		if (filter instanceof GroupFilter.ItemPathEndsWith endsWith) {
+			validatePartialPath(endsWith.suffix(), errors, "item_path_ends_with");
+			return;
+		}
+		if (filter instanceof GroupFilter.Namespace namespace) {
+			validateType(namespace.ingredientType(), errors, "namespace");
+			if (!ResourceLocation.isValidNamespace(namespace.namespace())) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_INVALID_NAMESPACE, namespace.namespace());
 			}
-			case GroupFilter.Tag tag -> {
-				validateType(tag.ingredientType(), errors, "tag");
-				validateResourceLocation(tag.tag(), errors, "tag");
+			return;
+		}
+		if (filter instanceof GroupFilter.ExactStack exactStack) {
+			if (exactStack.encodedStack().isBlank()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_EXACT_STACK_BLANK);
+			} else if (GroupItemSelector.decodeExactSelector(STACK_PREFIX + exactStack.encodedStack()).isEmpty()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_EXACT_STACK_INVALID);
 			}
-			case GroupFilter.BlockTag blockTag -> validateResourceLocation(blockTag.tag(), errors, "block_tag");
-			case GroupFilter.ItemPathStartsWith startsWith -> validatePartialPath(startsWith.prefix(), errors, "item_path_starts_with");
-			case GroupFilter.ItemPathEndsWith endsWith -> validatePartialPath(endsWith.suffix(), errors, "item_path_ends_with");
-			case GroupFilter.Namespace namespace -> {
-				validateType(namespace.ingredientType(), errors, "namespace");
-				if (!ResourceLocation.isValidNamespace(namespace.namespace())) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_INVALID_NAMESPACE, namespace.namespace());
-				}
+			return;
+		}
+		if (filter instanceof GroupFilter.HasComponent hc) {
+			if (hc.componentTypeId().isBlank()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_HAS_COMPONENT_TYPE_BLANK);
+			} else if (ResourceLocation.tryParse(hc.componentTypeId()) == null) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_HAS_COMPONENT_TYPE_INVALID, hc.componentTypeId());
 			}
-			case GroupFilter.ExactStack exactStack -> {
-				if (exactStack.encodedStack().isBlank()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_EXACT_STACK_BLANK);
-				} else if (GroupItemSelector.decodeExactSelector(STACK_PREFIX + exactStack.encodedStack()).isEmpty()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_EXACT_STACK_INVALID);
-				}
+			if (hc.encodedValue().isBlank()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_HAS_COMPONENT_VALUE_BLANK);
 			}
-			case GroupFilter.HasComponent hc -> {
-				if (hc.componentTypeId().isBlank()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_HAS_COMPONENT_TYPE_BLANK);
-				} else if (ResourceLocation.tryParse(hc.componentTypeId()) == null) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_HAS_COMPONENT_TYPE_INVALID, hc.componentTypeId());
-				}
-				if (hc.encodedValue().isBlank()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_HAS_COMPONENT_VALUE_BLANK);
-				}
+			return;
+		}
+		if (filter instanceof GroupFilter.ComponentPath cp) {
+			if (cp.componentTypeId().isBlank()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_TYPE_BLANK);
+			} else if (ResourceLocation.tryParse(cp.componentTypeId()) == null) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_TYPE_INVALID, cp.componentTypeId());
 			}
-			case GroupFilter.ComponentPath cp -> {
-				if (cp.componentTypeId().isBlank()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_TYPE_BLANK);
-				} else if (ResourceLocation.tryParse(cp.componentTypeId()) == null) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_TYPE_INVALID, cp.componentTypeId());
-				}
-				if (cp.path().isBlank()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_BLANK);
-				} else if (!PATH_PATTERN.matcher(cp.path()).matches()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_GRAMMAR, cp.path());
-				}
-				if (cp.expectedValue().isBlank()) {
-					addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_VALUE_BLANK);
-				}
+			if (cp.path().isBlank()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_BLANK);
+			} else if (!PATH_PATTERN.matcher(cp.path()).matches()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_GRAMMAR, cp.path());
+			}
+			if (cp.expectedValue().isBlank()) {
+				addError(errors, ModTranslationKeys.EDITOR_RULES_ERROR_COMPONENT_PATH_VALUE_BLANK);
 			}
 		}
 	}

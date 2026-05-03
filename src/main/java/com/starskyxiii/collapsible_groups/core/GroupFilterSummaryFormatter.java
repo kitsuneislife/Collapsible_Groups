@@ -24,20 +24,43 @@ public final class GroupFilterSummaryFormatter {
 	}
 
 	private static String formatNode(GroupFilter filter, boolean expandAtomicChildren) {
-		return switch (filter) {
-			case GroupFilter.Any any -> formatComposite("ANY", any.children(), expandAtomicChildren);
-			case GroupFilter.All all -> formatComposite("ALL", all.children(), expandAtomicChildren);
-			case GroupFilter.Not not -> "NOT(" + formatNestedChild(not.child()) + ")";
-			case GroupFilter.Id id -> formatId(id.ingredientType(), id.id());
-			case GroupFilter.Tag tag -> formatTag(tag.ingredientType(), tag.tag());
-			case GroupFilter.BlockTag blockTag -> "block tag " + blockTag.tag();
-			case GroupFilter.ItemPathStartsWith startsWith -> "item path starts with " + startsWith.prefix();
-			case GroupFilter.ItemPathEndsWith endsWith -> "item path ends with " + endsWith.suffix();
-			case GroupFilter.Namespace namespace -> formatNamespace(namespace.ingredientType(), namespace.namespace());
-			case GroupFilter.ExactStack ignored -> "exact stack";
-			case GroupFilter.HasComponent hc -> "has component " + hc.componentTypeId() + "=" + hc.encodedValue();
-			case GroupFilter.ComponentPath cp -> "component path " + cp.componentTypeId() + "/" + cp.path() + "=" + cp.expectedValue();
-		};
+		if (filter instanceof GroupFilter.Any any) {
+			return formatComposite("ANY", any.children(), expandAtomicChildren);
+		}
+		if (filter instanceof GroupFilter.All all) {
+			return formatComposite("ALL", all.children(), expandAtomicChildren);
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			return "NOT(" + formatNestedChild(not.child()) + ")";
+		}
+		if (filter instanceof GroupFilter.Id id) {
+			return formatId(id.ingredientType(), id.id());
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			return formatTag(tag.ingredientType(), tag.tag());
+		}
+		if (filter instanceof GroupFilter.BlockTag blockTag) {
+			return "block tag " + blockTag.tag();
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith startsWith) {
+			return "item path starts with " + startsWith.prefix();
+		}
+		if (filter instanceof GroupFilter.ItemPathEndsWith endsWith) {
+			return "item path ends with " + endsWith.suffix();
+		}
+		if (filter instanceof GroupFilter.Namespace namespace) {
+			return formatNamespace(namespace.ingredientType(), namespace.namespace());
+		}
+		if (filter instanceof GroupFilter.ExactStack) {
+			return "exact stack";
+		}
+		if (filter instanceof GroupFilter.HasComponent hc) {
+			return "has component " + hc.componentTypeId() + "=" + hc.encodedValue();
+		}
+		if (filter instanceof GroupFilter.ComponentPath cp) {
+			return "component path " + cp.componentTypeId() + "/" + cp.path() + "=" + cp.expectedValue();
+		}
+		return "";
 	}
 
 	private static String formatComposite(String operator, List<GroupFilter> children, boolean expandAtomicChildren) {
@@ -79,12 +102,16 @@ public final class GroupFilterSummaryFormatter {
 		if (isAtomic(child)) {
 			return formatNode(child, true);
 		}
-		return switch (child) {
-			case GroupFilter.Any ignored -> "ANY(...)";
-			case GroupFilter.All ignored -> "ALL(...)";
-			case GroupFilter.Not ignored -> "NOT(...)";
-			default -> formatNode(child, false);
-		};
+		if (child instanceof GroupFilter.Any) {
+			return "ANY(...)";
+		}
+		if (child instanceof GroupFilter.All) {
+			return "ALL(...)";
+		}
+		if (child instanceof GroupFilter.Not) {
+			return "NOT(...)";
+		}
+		return formatNode(child, false);
 	}
 
 	private static boolean isAtomic(GroupFilter filter) {
@@ -100,18 +127,34 @@ public final class GroupFilterSummaryFormatter {
 	}
 
 	private static String categoryLabel(GroupFilter filter) {
-		return switch (filter) {
-			case GroupFilter.Id id -> categoryPrefix(id.ingredientType()) + "id";
-			case GroupFilter.Tag tag -> categoryPrefix(tag.ingredientType()) + "tag";
-			case GroupFilter.BlockTag ignored -> "block tag";
-			case GroupFilter.ItemPathStartsWith ignored -> "item path starts with";
-			case GroupFilter.ItemPathEndsWith ignored -> "item path ends with";
-			case GroupFilter.Namespace namespace -> categoryPrefix(namespace.ingredientType()) + "namespace";
-			case GroupFilter.ExactStack ignored -> "exact stack";
-			case GroupFilter.HasComponent ignored -> "has component";
-			case GroupFilter.ComponentPath ignored -> "component path";
-			default -> formatNode(filter, false);
-		};
+		if (filter instanceof GroupFilter.Id id) {
+			return categoryPrefix(id.ingredientType()) + "id";
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			return categoryPrefix(tag.ingredientType()) + "tag";
+		}
+		if (filter instanceof GroupFilter.BlockTag) {
+			return "block tag";
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith) {
+			return "item path starts with";
+		}
+		if (filter instanceof GroupFilter.ItemPathEndsWith) {
+			return "item path ends with";
+		}
+		if (filter instanceof GroupFilter.Namespace namespace) {
+			return categoryPrefix(namespace.ingredientType()) + "namespace";
+		}
+		if (filter instanceof GroupFilter.ExactStack) {
+			return "exact stack";
+		}
+		if (filter instanceof GroupFilter.HasComponent) {
+			return "has component";
+		}
+		if (filter instanceof GroupFilter.ComponentPath) {
+			return "component path";
+		}
+		return formatNode(filter, false);
 	}
 
 	private static String formatId(String ingredientType, String id) {
@@ -127,18 +170,22 @@ public final class GroupFilterSummaryFormatter {
 	}
 
 	private static String categoryPrefix(String ingredientType) {
-		return switch (ingredientType) {
-			case ITEM_TYPE -> "item ";
-			case FLUID_TYPE -> "fluid ";
-			default -> ingredientType + " ";
-		};
+		if (ITEM_TYPE.equals(ingredientType)) {
+			return "item ";
+		}
+		if (FLUID_TYPE.equals(ingredientType)) {
+			return "fluid ";
+		}
+		return ingredientType + " ";
 	}
 
 	private static String valuePrefix(String ingredientType) {
-		return switch (ingredientType) {
-			case ITEM_TYPE -> "";
-			case FLUID_TYPE -> "fluid ";
-			default -> ingredientType + " ";
-		};
+		if (ITEM_TYPE.equals(ingredientType)) {
+			return "";
+		}
+		if (FLUID_TYPE.equals(ingredientType)) {
+			return "fluid ";
+		}
+		return ingredientType + " ";
 	}
 }

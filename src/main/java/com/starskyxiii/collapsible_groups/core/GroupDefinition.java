@@ -150,27 +150,37 @@ public final class GroupDefinition {
 	}
 
 	private static boolean hasAtomicNodeMatching(GroupFilter filter, Predicate<GroupFilter> test) {
-		return switch (filter) {
-			case GroupFilter.Any any -> any.children().stream().anyMatch(child -> hasAtomicNodeMatching(child, test));
-			case GroupFilter.All all -> all.children().stream().anyMatch(child -> hasAtomicNodeMatching(child, test));
-			case GroupFilter.Not not -> hasAtomicNodeMatching(not.child(), test);
-			default -> test.test(filter);
-		};
+		if (filter instanceof GroupFilter.Any any) {
+			return any.children().stream().anyMatch(child -> hasAtomicNodeMatching(child, test));
+		}
+		if (filter instanceof GroupFilter.All all) {
+			return all.children().stream().anyMatch(child -> hasAtomicNodeMatching(child, test));
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			return hasAtomicNodeMatching(not.child(), test);
+		}
+		return test.test(filter);
 	}
 
 	private static String atomicType(GroupFilter node) {
-		return switch (node) {
-			case GroupFilter.Id id -> id.ingredientType();
-			case GroupFilter.Tag tag -> tag.ingredientType();
-			case GroupFilter.BlockTag ignored -> "item";
-			case GroupFilter.ItemPathStartsWith ignored -> "item";
-			case GroupFilter.ItemPathEndsWith ignored -> "item";
-			case GroupFilter.Namespace namespace -> namespace.ingredientType();
-			case GroupFilter.ExactStack ignored -> "item";
-			case GroupFilter.HasComponent ignored -> "item";
-			case GroupFilter.ComponentPath ignored -> "item";
-			default -> null;
-		};
+		if (node instanceof GroupFilter.Id id) {
+			return id.ingredientType();
+		}
+		if (node instanceof GroupFilter.Tag tag) {
+			return tag.ingredientType();
+		}
+		if (node instanceof GroupFilter.Namespace namespace) {
+			return namespace.ingredientType();
+		}
+		if (node instanceof GroupFilter.BlockTag
+			|| node instanceof GroupFilter.ItemPathStartsWith
+			|| node instanceof GroupFilter.ItemPathEndsWith
+			|| node instanceof GroupFilter.ExactStack
+			|| node instanceof GroupFilter.HasComponent
+			|| node instanceof GroupFilter.ComponentPath) {
+			return "item";
+		}
+		return null;
 	}
 
 	@Override

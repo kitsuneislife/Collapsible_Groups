@@ -156,9 +156,7 @@ public abstract class MixinIngredientFilter {
 
 		if (!GroupRegistry.isKubeJsApplied() && ModList.get().isLoaded("kubejs")) {
 			com.starskyxiii.collapsible_groups.compat.kubejs.KubeJSGroupBridge.applyGroups(
-				GroupRegistry.getJeiAllItems(),
-				List.of(),
-				this.ingredientManager
+				GroupRegistry.getJeiAllItems()
 			);
 			GroupRegistry.markKubeJsApplied();
 			this.cg$ingredientGroupIndex = null;

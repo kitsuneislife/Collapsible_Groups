@@ -35,12 +35,6 @@ public class CollapsibleGroupsForge {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onRegisterReloadListeners);
         MinecraftForge.EVENT_BUS.addListener(this::onRegisterClientCommands);
 
-        if (ModList.get().isLoaded("kubejs")) {
-            MinecraftForge.EVENT_BUS.register(
-                com.starskyxiii.collapsible_groups.compat.kubejs.KubeJSRemoteListener.class
-            );
-        }
-
         if (ModList.get().isLoaded("mekanism")) {
             com.starskyxiii.collapsible_groups.compat.softdep.MekanismIngredientTypeLoader.register();
         }

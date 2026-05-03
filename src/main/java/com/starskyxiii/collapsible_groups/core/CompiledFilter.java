@@ -27,20 +27,43 @@ public final class CompiledFilter {
 	}
 
 	private static CompiledNode compileNode(GroupFilter filter) {
-		return switch (filter) {
-			case GroupFilter.Any any -> new AnyNode(any.children().stream().map(CompiledFilter::compileNode).toList());
-			case GroupFilter.All all -> new AllNode(all.children().stream().map(CompiledFilter::compileNode).toList());
-			case GroupFilter.Not not -> new NotNode(compileNode(not.child()));
-			case GroupFilter.Id id -> new IdNode(canonicalType(id.ingredientType()), new ResourceLocation(id.id()));
-			case GroupFilter.Tag tag -> new TagNode(canonicalType(tag.ingredientType()), new ResourceLocation(tag.tag()));
-			case GroupFilter.BlockTag blockTag -> new BlockTagNode(new ResourceLocation(blockTag.tag()));
-			case GroupFilter.ItemPathStartsWith startsWith -> new ItemPathStartsWithNode(startsWith.prefix());
-			case GroupFilter.ItemPathEndsWith endsWith -> new ItemPathEndsWithNode(endsWith.suffix());
-			case GroupFilter.Namespace namespace -> new NamespaceNode(canonicalType(namespace.ingredientType()), namespace.namespace());
-			case GroupFilter.ExactStack exactStack -> new ExactStackNode(exactStack.encodedStack());
-			case GroupFilter.HasComponent hc -> new HasComponentNode(hc.componentTypeId(), hc.encodedValue());
-			case GroupFilter.ComponentPath cp -> new ComponentPathNode(cp.componentTypeId(), cp.path(), cp.expectedValue());
-		};
+		if (filter instanceof GroupFilter.Any any) {
+			return new AnyNode(any.children().stream().map(CompiledFilter::compileNode).toList());
+		}
+		if (filter instanceof GroupFilter.All all) {
+			return new AllNode(all.children().stream().map(CompiledFilter::compileNode).toList());
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			return new NotNode(compileNode(not.child()));
+		}
+		if (filter instanceof GroupFilter.Id id) {
+			return new IdNode(canonicalType(id.ingredientType()), new ResourceLocation(id.id()));
+		}
+		if (filter instanceof GroupFilter.Tag tag) {
+			return new TagNode(canonicalType(tag.ingredientType()), new ResourceLocation(tag.tag()));
+		}
+		if (filter instanceof GroupFilter.BlockTag blockTag) {
+			return new BlockTagNode(new ResourceLocation(blockTag.tag()));
+		}
+		if (filter instanceof GroupFilter.ItemPathStartsWith startsWith) {
+			return new ItemPathStartsWithNode(startsWith.prefix());
+		}
+		if (filter instanceof GroupFilter.ItemPathEndsWith endsWith) {
+			return new ItemPathEndsWithNode(endsWith.suffix());
+		}
+		if (filter instanceof GroupFilter.Namespace namespace) {
+			return new NamespaceNode(canonicalType(namespace.ingredientType()), namespace.namespace());
+		}
+		if (filter instanceof GroupFilter.ExactStack exactStack) {
+			return new ExactStackNode(exactStack.encodedStack());
+		}
+		if (filter instanceof GroupFilter.HasComponent hc) {
+			return new HasComponentNode(hc.componentTypeId(), hc.encodedValue());
+		}
+		if (filter instanceof GroupFilter.ComponentPath cp) {
+			return new ComponentPathNode(cp.componentTypeId(), cp.path(), cp.expectedValue());
+		}
+		throw new IllegalStateException("Unsupported filter node: " + filter);
 	}
 
 	private static String canonicalType(String type) {

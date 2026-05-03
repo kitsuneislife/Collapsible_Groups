@@ -82,7 +82,7 @@ public final class GroupItemSelector {
 	}
 
 	static RegistryOps<JsonElement> serializationContext() {
-		return registryAccess().createSerializationContext(JsonOps.INSTANCE);
+		return RegistryOps.create(JsonOps.INSTANCE, registryAccess());
 	}
 
 	private static RegistryAccess registryAccess() {
@@ -92,9 +92,6 @@ public final class GroupItemSelector {
 		}
 		if (minecraft.getConnection() != null) {
 			return minecraft.getConnection().registryAccess();
-		}
-		if (minecraft.player != null) {
-			return minecraft.player.registryAccess();
 		}
 		if (FALLBACK_WARNING_LOGGED.compareAndSet(false, true)) {
 			Constants.LOG.warn(

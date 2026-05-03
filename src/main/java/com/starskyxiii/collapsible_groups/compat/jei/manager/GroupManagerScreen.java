@@ -134,7 +134,7 @@ public class GroupManagerScreen extends Screen {
 
 	@Override
 	public void render(GuiGraphics g, int mouseX, int mouseY, float partialTicks) {
-		renderBackground(g, mouseX, mouseY, partialTicks);
+		renderBackground(g);
 		hoveredCardIndex  = -1;
 		hoveredButtonType = -1;
 
@@ -429,23 +429,23 @@ public class GroupManagerScreen extends Screen {
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double deltaX, double deltaY) {
+	public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
 		for (int i = 0; i < filteredCards.size(); i++) {
 			int[] pos    = cardPos(i);
 			int previewX = pos[0] + 3, previewY = pos[1] + 25;
 			if (mouseX >= previewX && mouseX < previewX + PREVIEW_COLS * ITEM_SIZE && mouseY >= previewY && mouseY < previewY + PREVIEW_ROWS * ITEM_SIZE) {
 				int maxRow  = Math.max(0, totalRowsForCard(filteredCards.get(i)) - PREVIEW_ROWS);
 				int current = previewScrollOffsets.getOrDefault(filteredCards.get(i).id(), 0);
-				int next    = clamp(current - (int)Math.signum(deltaY), 0, maxRow);
+				int next    = clamp(current - (int)Math.signum(delta), 0, maxRow);
 				if (next != current) previewScrollOffsets.put(filteredCards.get(i).id(), next);
 				return true;
 			}
 		}
 		if (isInsideCardViewport(mouseX, mouseY)) {
-			scrollPixelOffset = clamp(scrollPixelOffset + (int)(deltaY * -20), 0, maxScrollPixels());
+			scrollPixelOffset = clamp(scrollPixelOffset + (int)(delta * -20), 0, maxScrollPixels());
 			return true;
 		}
-		return super.mouseScrolled(mouseX, mouseY, deltaX, deltaY);
+		return super.mouseScrolled(mouseX, mouseY, delta);
 	}
 
 	@Override public void onClose() { Minecraft.getInstance().setScreen(previousScreen); }

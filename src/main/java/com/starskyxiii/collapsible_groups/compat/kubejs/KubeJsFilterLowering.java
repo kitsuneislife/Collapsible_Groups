@@ -3,33 +3,30 @@ package com.starskyxiii.collapsible_groups.compat.kubejs;
 import com.starskyxiii.collapsible_groups.core.Filters;
 import com.starskyxiii.collapsible_groups.core.GroupFilter;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraft.core.registries.BuiltInRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/**
- * Shared lowering helpers for KubeJS bridge fallback paths.
- */
 public final class KubeJsFilterLowering {
-	private KubeJsFilterLowering() {}
+    private KubeJsFilterLowering() {}
 
-	public static GroupFilter lowerResolvedFluidStack(FluidStack stack) {
-		return Filters.fluidId(BuiltInRegistries.FLUID.getKey(stack.getFluid()).toString());
-	}
+    public static GroupFilter lowerResolvedFluidStack(FluidStack stack) {
+        return Filters.fluidId(BuiltInRegistries.FLUID.getKey(stack.getFluid()).toString());
+    }
 
-	public static GroupFilter lowerResolvedGenericIngredient(String typeId, ResourceLocation id) {
-		return Filters.genericId(typeId, id.toString());
-	}
+    public static GroupFilter lowerResolvedGenericIngredient(String typeId, ResourceLocation id) {
+        return Filters.genericId(typeId, id.toString());
+    }
 
-	public static @Nullable GroupFilter composeFallbackNodes(List<GroupFilter> nodes) {
-		if (nodes.isEmpty()) {
-			return null;
-		}
-		if (nodes.size() == 1) {
-			return nodes.getFirst();
-		}
-		return Filters.any(nodes.toArray(GroupFilter[]::new));
-	}
+    public static @Nullable GroupFilter composeFallbackNodes(List<GroupFilter> nodes) {
+        if (nodes.isEmpty()) {
+            return null;
+        }
+        if (nodes.size() == 1) {
+            return nodes.get(0);
+        }
+        return Filters.any(nodes.toArray(GroupFilter[]::new));
+    }
 }

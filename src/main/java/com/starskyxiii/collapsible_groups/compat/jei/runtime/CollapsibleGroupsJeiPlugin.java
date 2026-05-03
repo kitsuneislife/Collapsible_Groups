@@ -1,6 +1,5 @@
 package com.starskyxiii.collapsible_groups.compat.jei.runtime;
 
-import com.mojang.serialization.Codec;
 import com.starskyxiii.collapsible_groups.compat.jei.element.GroupIcon;
 import com.starskyxiii.collapsible_groups.compat.jei.element.GroupIconHelper;
 import com.starskyxiii.collapsible_groups.compat.jei.element.GroupIconRenderer;
@@ -35,8 +34,7 @@ public class CollapsibleGroupsJeiPlugin implements IModPlugin {
 			GroupIcon.TYPE,
 			Collections.emptyList(),
 			new GroupIconHelper(),
-			new GroupIconRenderer(),
-			Codec.unit(() -> new GroupIcon("", "", "", Collections.emptyList()))
+			new GroupIconRenderer()
 		);
 	}
 

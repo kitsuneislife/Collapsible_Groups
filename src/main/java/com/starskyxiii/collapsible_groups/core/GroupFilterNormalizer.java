@@ -7,12 +7,16 @@ public final class GroupFilterNormalizer {
 	private GroupFilterNormalizer() {}
 
 	public static GroupFilter normalize(GroupFilter filter) {
-		return switch (filter) {
-			case GroupFilter.Any any -> normalizeAny(any.children());
-			case GroupFilter.All all -> normalizeAll(all.children());
-			case GroupFilter.Not not -> normalizeNot(not.child());
-			default -> filter;
-		};
+		if (filter instanceof GroupFilter.Any any) {
+			return normalizeAny(any.children());
+		}
+		if (filter instanceof GroupFilter.All all) {
+			return normalizeAll(all.children());
+		}
+		if (filter instanceof GroupFilter.Not not) {
+			return normalizeNot(not.child());
+		}
+		return filter;
 	}
 
 	private static GroupFilter normalizeAny(List<GroupFilter> children) {
@@ -26,7 +30,7 @@ public final class GroupFilterNormalizer {
 			}
 		}
 		if (normalized.size() == 1) {
-			return normalized.getFirst();
+			return normalized.get(0);
 		}
 		return new GroupFilter.Any(normalized);
 	}
@@ -42,7 +46,7 @@ public final class GroupFilterNormalizer {
 			}
 		}
 		if (normalized.size() == 1) {
-			return normalized.getFirst();
+			return normalized.get(0);
 		}
 		return new GroupFilter.All(normalized);
 	}
