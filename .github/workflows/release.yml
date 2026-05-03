@@ -26,14 +26,31 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
+    - name: Cache Gradle packages
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    - name: Cache Forge/Minecraft artifacts
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches/forge_gradle
+          ~/.gradle/caches/minecraft
+        key: ${{ runner.os }}-forgecache-${{ hashFiles('gradle.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-forgecache-
 
     - name: Make gradlew executable
       run: chmod +x ./gradlew
 
     - name: Build with Gradle
-      run: ./gradlew build --no-daemon
+      run: ./gradlew build --no-daemon --stacktrace
 
     - name: Create Release
       uses: softprops/action-gh-release@v2
@@ -46,3 +63,4 @@ jobs:
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

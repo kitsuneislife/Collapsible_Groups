@@ -29,7 +29,8 @@ public final class AE2 implements DefaultGroupProvider {
 			group("__default_ae2_colored_covered_cables",   "AE2: Colored Covered Cables", Filters.all(Filters.itemTag("ae2:covered_cable"), Filters.not(Filters.itemId("ae2:fluix_covered_cable")))),
 			group("__default_ae2_colored_glass_cables",   "AE2: Colored Glass Cables", Filters.all(Filters.itemTag("ae2:glass_cable"), Filters.not(Filters.itemId("ae2:fluix_glass_cable")))),
 			group("__default_ae2_colored_covered_dense_cables",   "AE2: Colored Dense Covered Cables", Filters.all(Filters.itemTag("ae2:covered_dense_cable"), Filters.not(Filters.itemId("ae2:fluix_covered_dense_cable")))),
-			group("__default_ae2_colored_smart_dense_cables",   "AE2: Colored Dense Smart Cables", Filters.all(Filters.itemTag("ae2:smart_dense_cable"), Filters.not(Filters.itemId("ae2:fluix_smart_dense_cable"))))
+			group("__default_ae2_colored_smart_dense_cables",   "AE2: Colored Dense Smart Cables", Filters.all(Filters.itemTag("ae2:smart_dense_cable"), Filters.not(Filters.itemId("ae2:fluix_smart_dense_cable")))),
+			group("__default_ae2_facades", "AE2: Facades", Filters.itemId("ae2:facade"))
 		);
 	}
 }
