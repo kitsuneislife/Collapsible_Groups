@@ -1,23 +1,40 @@
-# Collapsible Groups
+# Collapsible Groups (Forge 1.20.1)
 
-Collapsible Groups is a JEI grouping mod for Minecraft 1.20.1 & 1.21.1. It lets players, modpack developers, and modders define collapsible item, fluid, and other ingredient type groups through an in-game editor, JSON config files, KubeJS, or built-in providers.
+Collapsible Groups is a powerful JEI grouping mod that dramatically cleans up your JEI ingredient list. It allows players, modpack developers, and modders to define collapsible groups for items, fluids, and other ingredient types. 
 
-## Overview
+You can define groups via an **in-game editor**, **JSON config files**, **KubeJS scripts**, or by relying on our **built-in providers** for popular mods.
 
-This mod provides JEI ingredient grouping for Minecraft 1.20.1 and 1.21.1, with the richest feature set on NeoForge/Forge and lighter-weight builds for Fabric.
+---
 
-## Forge 1.20.1 Backport Progress
+## 🚀 Features
 
-Progress (0% -> 100%): [##########] 100%
+- **Declutter JEI:** Hide hundreds of tool parts, colored blocks, and raw ores behind clean, expandable folders in the JEI menu.
+- **In-Game Editor:** Create, edit, and delete groups visually directly from inside the game without needing to write code.
+- **KubeJS Integration:** Full KubeJS 1.20.1 runtime support to define dynamic groups via `StartupEvents.registry('collapsible_groups:group')`.
+- **Advanced Filtering:** Group items by ID, namespace, tags, path prefix/suffix, or specific components.
+- **Extensive Mod Support:** Natively supports collapsing items for dozens of popular mods out-of-the-box (toggleable in configs).
 
-Backport Changelog (minimal):
-- Iter 01 (5%): Repo trimmed to Forge-only layout; sources/resources merged into root module.
-- Iter 02 (12%): Build retargeted to Forge 1.20.1 baseline (Java 17, deps placeholders).
-- Iter 03 (25%): KubeJS + soft-dep hooks restored; 1.20.1 tag-based stack handling.
-- Iter 04 (32%): Replaced 1.21.1-only APIs (ResourceLocation, ItemStack compare) for 1.20.1.
-- Iter 05 (35%): Build script guard for missing sourcesJar; compile requires Java 17 toolchain.
-- Iter 06 (40%): Targeted JEI/KubeJS versions for Forge 1.20.1.
-- Iter 07 (43%): Added Architectury maven repo for KubeJS deps.
-- Iter 08 (50%): Rewrote preview switch patterns for Java 17.
-- Iter 09 (58%): JEI 1.20.1 button API update; KubeJS custom event bridge.
-- Iter 10 (100%): Forge 1.20.1 Gradle environment stabilized; Fixed KubeJS runtime mappings and unit tests; Production build validated.
+## 🔙 The Forge 1.20.1 Backport
+
+This repository is a dedicated backport of the original `1.21.1` multi-loader project, specifically tailored and optimized for **Forge 1.20.1**. 
+
+### What's Different from the Original?
+1. **Forge-Only Layout:** Stripped away the complex `fabric/`, `neoforge/`, and `common/` multi-loader architecture to provide a clean, single-project Forge build environment.
+2. **Java 17 Downgrade:** Refactored modern Java 21 features (e.g., Pattern Matching for switch, `List.getFirst()`) to be fully compatible with the Java 17 standard required by 1.20.1.
+3. **Minecraft 1.20.1 APIs:** Replaced `1.21.1` mechanisms like `ResourceLocation.parse()` and Component-based item comparisons with classic NBT and 1.20.1 mapping standards.
+4. **Restored Mod Integrations:** Rescued and ported built-in integration providers that were previously exclusive to NeoForge, including **Tinkers' Construct**, **Create**, **AllTheOres**, **Botania**, **Farmer's Delight**, **AE2**, **Apotheosis**, **Chisel**, **EnderIO**, **Iron's Spellbooks**, and **Traveler's Backpack**.
+
+## ⚙️ Building from Source
+
+To compile the mod yourself, you will need JDK 17 installed.
+
+```bash
+git clone https://github.com/YourName/Collapsible_Groups.git
+cd Collapsible_Groups
+./gradlew build
+```
+The compiled `.jar` file will be located in `build/libs/`.
+
+## 📦 Releases
+
+This repository includes a **GitHub Actions Workflow** configured for manual dispatch. Modpack authors or server admins can trigger a `workflow_dispatch` run on the Actions tab to automatically compile the project and generate a release `.jar` directly on GitHub.
