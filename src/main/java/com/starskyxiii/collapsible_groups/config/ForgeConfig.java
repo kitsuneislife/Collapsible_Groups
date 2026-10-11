@@ -71,6 +71,9 @@ public final class ForgeConfig implements IConfigProvider {
 	@Override public boolean shouldLoadFarmersDelight() {
 		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_FARMERS_DELIGHT.get() && net.minecraftforge.fml.ModList.get().isLoaded("farmersdelight");
 	}
+	@Override public boolean shouldLoadChipped() {
+		return LOAD_DEFAULT_GROUPS.get() && LOAD_MOD_INTEGRATION_GROUPS.get() && LOAD_CHIPPED.get() && net.minecraftforge.fml.ModList.get().isLoaded("chipped");
+	}
 	@Override public boolean showManagerButton()                   { return SHOW_MANAGER_BUTTON.get(); }
 	@Override public boolean debugTimingEnabled()                  { return DEBUG_TIMING_LOGS.get(); }
 	@Override public boolean debugStartupIndexVerificationEnabled() { return DEBUG_STARTUP_INDEX_VERIFY.get(); }
@@ -115,6 +118,7 @@ public final class ForgeConfig implements IConfigProvider {
 	public static final ForgeConfigSpec.BooleanValue LOAD_TRAVELERS_BACKPACK;
 	public static final ForgeConfigSpec.BooleanValue LOAD_ALL_THE_ORES;
 	public static final ForgeConfigSpec.BooleanValue LOAD_FARMERS_DELIGHT;
+	public static final ForgeConfigSpec.BooleanValue LOAD_CHIPPED;
 
 	// ui
 
@@ -183,8 +187,7 @@ public final class ForgeConfig implements IConfigProvider {
 		LOAD_TRAVELERS_BACKPACK = builder.comment("Whether to load built-in Traveler's Backpack groups.").define("loadTravelersBackpack", true);
 		LOAD_ALL_THE_ORES = builder.comment("Whether to load built-in AllTheOres groups.").define("loadAllTheOres", true);
 		LOAD_FARMERS_DELIGHT = builder.comment("Whether to load built-in Farmer's Delight groups.").define("loadFarmersDelight", true);
-		// Note: Chipped and RS2 integration groups are not yet implemented on Forge.
-		// IConfigProvider defaults shouldLoadChipped() and shouldLoadRS2() to false.
+		LOAD_CHIPPED = builder.comment("Whether to load built-in Chipped block variant groups.").define("loadChipped", true);
 		builder.pop(); // ModIntegration
 		builder.pop(); // defaultGroups
 

@@ -23,6 +23,7 @@ public final class TinkersConstruct implements DefaultGroupProvider {
 			group("__default_tconstruct_tool_bindings", "Tool Bindings", Filters.itemId("tconstruct:tool_binding")),
 			group("__default_tconstruct_tool_handles", "Tool Handles", Filters.itemId("tconstruct:tool_handle")),
 			group("__default_tconstruct_sword_blades", "Sword Blades", Filters.itemId("tconstruct:sword_blade")),
+			group("__default_tconstruct_broad_blades", "Broad Blades", Filters.itemId("tconstruct:broad_blade")),
 			group("__default_tconstruct_tough_handles", "Tough Handles", Filters.itemId("tconstruct:tough_handle")),
 			group("__default_tconstruct_hammer_heads", "Hammer Heads", Filters.itemId("tconstruct:hammer_head")),
 			group("__default_tconstruct_broad_axe_heads", "Broad Axe Heads", Filters.itemId("tconstruct:broad_axe_head")),
